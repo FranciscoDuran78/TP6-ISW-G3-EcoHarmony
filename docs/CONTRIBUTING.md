@@ -28,7 +28,7 @@ Usamos un formato fijo, con la descripción en infinitivo.
 La convención a utilizar es: 1 commit por cada etapa del TDD el cual abarque por funcionalidad.
 
 ```
-tipo/descripcion-corta
+tipo:descripcion-corta
 ```
 
 ### Tipos de commits TDD

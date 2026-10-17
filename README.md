@@ -1,4 +1,4 @@
-# TP6 — EcoHarmony Park: Comprar entradas
+# TP6 - EcoHarmony Park: Comprar entradas
 
 Implementación inicial de la historia de usuario “Comprar entradas”, trabajada con ciclos TDD Red–Green–Refactor.
 
@@ -8,7 +8,7 @@ Implementación inicial de la historia de usuario “Comprar entradas”, trabaj
 - Frontend: JavaScript, React y Vite.
 - Pruebas: Jest, dobles de prueba e SQLite en memoria.
 
-# 2. Estructura del proyecto
+## 2. Estructura del proyecto
 
 ```
 ├── apps/
@@ -16,7 +16,7 @@ Implementación inicial de la historia de usuario “Comprar entradas”, trabaj
 │   └── backend/
 ├── docs/                  # Documentación del proyecto
 │   └── CONTRIBUTING.md
-└── README.md           # workspaces
+└── README.md
 ```
 
 Frontend:

@@ -1,0 +1,27 @@
+{
+  "name": "ecoharmony-park-tp6",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm:dev:backend\" \"npm:dev:frontend\"",
+    "dev:backend": "npm --workspace @ecoharmony/backend run dev",
+    "dev:frontend": "npm --workspace @ecoharmony/frontend run dev",
+    "build": "npm --workspace @ecoharmony/frontend run build",
+    "test": "npm --workspace @ecoharmony/backend test",
+    "lint": "eslint apps --ext .js,.jsx",
+    "lint:fix": "npm run lint -- --fix"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1",
+    "eslint": "^8.57.1",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.32.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^4.6.2"
+  }
+}

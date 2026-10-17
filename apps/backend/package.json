@@ -1,0 +1,19 @@
+{
+  "name": "@ecoharmony/backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/app.js",
+  "scripts": {
+    "dev": "node --watch src/server.js",
+    "start": "node src/server.js",
+    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --runInBand"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.4.1",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "jest": "^30.5.2"
+  }
+}

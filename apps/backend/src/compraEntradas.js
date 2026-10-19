@@ -1,14 +1,15 @@
-// ----------------  ETAPA DE GREEN ---------------- 
+// ----------------  ETAPA DE REFACTORY ---------------- 
 // ---------------- CASO DE PRUEBA 70 ----------------
 
 const MENSAJES_ERROR = {
   DISCREPANCIA_VISITANTES:
     'La cantidad de entradas no coincide con los visitantes ingresados',
   EDAD_NO_VALIDA: 'La edad no es válida',
-  VISITANTE_SIN_EDAD: 'Cada visitante debe indicar su edad'
+  VISITANTE_SIN_EDAD: 'Cada visitante debe indicar su edad',
+  VISITANTE_SIN_PASE: 'Cada visitante debe indicar tipo de pase VIP o Regular'
 };
 
-const validarEdadNoNegativa = (visitante) => {
+const validarDatosIndividualesVisitante = (visitante) => {
   if (visitante.edad === null || visitante.edad === undefined) {
     throw new Error(MENSAJES_ERROR.VISITANTE_SIN_EDAD);
   }
@@ -18,7 +19,7 @@ const validarEdadNoNegativa = (visitante) => {
   }
 
   if (!visitante.tipoPase || visitante.tipoPase.trim() === '') {
-    throw new Error('Cada visitante debe indicar tipo de pase VIP o Regular');
+    throw new Error(MENSAJES_ERROR.VISITANTE_SIN_PASE);
 }
 
 };
@@ -28,7 +29,7 @@ const validarEstructuraVisitantes = (cantidad, visitantes) => {
     throw new Error(MENSAJES_ERROR.DISCREPANCIA_VISITANTES);
   }
 
-  visitantes.forEach(validarEdadNoNegativa);
+  visitantes.forEach(validarDatosIndividualesVisitante);
 
   return true;
 };

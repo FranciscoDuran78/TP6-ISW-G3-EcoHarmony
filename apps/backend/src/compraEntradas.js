@@ -18,9 +18,6 @@ const validarCantidadEntradas = (cantidad) => {
   return true;
 };
 
-// ===========================================================================
-// [TC-16] - ETAPA REFACTOR: Lógica limpia para producción
-// ===========================================================================
 const validarLimiteAcumuladoPorFecha = (
   previas,
   cantidadActual,
@@ -37,7 +34,15 @@ const validarLimiteAcumuladoPorFecha = (
   return true;
 };
 
-const validarEstructuraVisitantes = () => {};
+// ===========================================================================
+// [TC-17] - ETAPA GREEN: Código mínimo para rechazar lista vacía
+// ===========================================================================
+const validarEstructuraVisitantes = (cantidad, visitantes) => {
+  if (visitantes.length === 0) {
+    throw new Error('Debe detallar la edad y tipo de pase de cada visitante');
+  }
+  return true;
+};
 
 export {
   MAXIMO_ENTRADAS_POR_COMPRA,

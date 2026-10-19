@@ -1,9 +1,6 @@
 const MAXIMO_ENTRADAS_POR_COMPRA = 10;
 const MAXIMO_ENTRADAS_POR_FECHA = 10;
 
-// ===========================================================================
-// [TC-19] - ETAPA REFACTOR: Incorporar VISITANTE_SIN_EDAD a MENSAJES_ERROR
-// ===========================================================================
 const MENSAJES_ERROR = {
   CANTIDAD_NO_ENTERA: 'La cantidad de entradas debe ser un número entero',
   DISCREPANCIA_VISITANTES: 'La cantidad de entradas no coincide con los visitantes ingresados',
@@ -55,6 +52,15 @@ const validarEstructuraVisitantes = (cantidad, visitantes) => {
 
   if (faltaEdad) {
     throw new Error(MENSAJES_ERROR.VISITANTE_SIN_EDAD);
+  }
+
+  // =========================================================================
+  // [TC-20] - ETAPA GREEN: Código mínimo para rechazar tipoPase vacío
+  // =========================================================================
+  const faltaTipoPase = visitantes.some((visitante) => !visitante.tipoPase);
+
+  if (faltaTipoPase) {
+    throw new Error('Cada visitante debe indicar tipo de pase VIP o Regular');
   }
 
   return true;

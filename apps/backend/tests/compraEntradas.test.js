@@ -97,9 +97,7 @@ describe('Validación de estructura de visitantes en el pedido', () => {
     }).toThrow('Debe detallar la edad y tipo de pase de cada visitante');
   });
 
-  // =========================================================================
-  // [TC-18] - ETAPA RED: Rechazar si cantidad (3) !== visitantes.length (2)
-  // =========================================================================
+  // [TC-18] - Completado
   test('TC-18: debería lanzar un error si la cantidad declarada no coincide con el tamaño de la lista de visitantes', () => {
     const cantidad = 3;
     const visitantes = [
@@ -110,5 +108,17 @@ describe('Validación de estructura de visitantes en el pedido', () => {
     expect(() => {
       validarEstructuraVisitantes(cantidad, visitantes);
     }).toThrow('La cantidad de entradas no coincide con los visitantes ingresados');
+  });
+
+  // =========================================================================
+  // [TC-19] - ETAPA RED: Rechazar si a un visitante le falta indicar la edad
+  // =========================================================================
+  test('TC-19: debería lanzar un error si a un visitante le falta indicar la edad', () => {
+    const cantidad = 1;
+    const visitantes = [{ edad: null, tipoPase: 'VIP' }];
+
+    expect(() => {
+      validarEstructuraVisitantes(cantidad, visitantes);
+    }).toThrow('Cada visitante debe indicar su edad');
   });
 });

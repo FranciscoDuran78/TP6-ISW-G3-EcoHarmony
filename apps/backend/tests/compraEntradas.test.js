@@ -1,7 +1,7 @@
 import { validarEstructuraVisitantes, calcularPreciosVisitantes } from '../src/compraEntradas.js';
 
-// ----------------  ETAPA DE REFACTORY ---------------- 
-// ---------------- CASO DE PRUEBA 70 ----------------
+// ----------------  ETAPA DE RED ---------------- 
+// ---------------- CASO DE PRUEBA 71 ----------------
 
 describe('Edades', () => {
   test('TC-67: rechaza un visitante con edad negativa', () => {
@@ -42,5 +42,17 @@ describe('Visitantes y entradas', () => {
 
     expect(() => validarEstructuraVisitantes(2, visitantes))
       .toThrow('Cada visitante debe indicar tipo de pase VIP o Regular');
+  });
+});
+
+describe('Fecha única por compra', () => {
+  test('TC-71: acepta varias entradas asociadas a la misma fecha válida', () => {
+    const entradas = [
+      { fechaVisita: '2026-11-20' },
+      { fechaVisita: '2026-11-20' },
+      { fechaVisita: '2026-11-20' },
+    ];
+
+    expect(validarFechaUnica(entradas)).toBe(true);
   });
 });

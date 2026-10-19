@@ -87,9 +87,7 @@ describe('Validación de límite acumulado por fecha', () => {
 });
 
 describe('Validación de estructura de visitantes en el pedido', () => {
-  // =========================================================================
-  // [TC-17] - ETAPA RED: Rechazar si no se envía el listado de visitantes
-  // =========================================================================
+  // [TC-17] - Completado
   test('TC-17: debería lanzar un error si no se envía el listado de visitantes', () => {
     const cantidad = 2;
     const visitantes = [];
@@ -97,5 +95,20 @@ describe('Validación de estructura de visitantes en el pedido', () => {
     expect(() => {
       validarEstructuraVisitantes(cantidad, visitantes);
     }).toThrow('Debe detallar la edad y tipo de pase de cada visitante');
+  });
+
+  // =========================================================================
+  // [TC-18] - ETAPA RED: Rechazar si cantidad (3) !== visitantes.length (2)
+  // =========================================================================
+  test('TC-18: debería lanzar un error si la cantidad declarada no coincide con el tamaño de la lista de visitantes', () => {
+    const cantidad = 3;
+    const visitantes = [
+      { edad: 25, tipoPase: 'VIP' },
+      { edad: 30, tipoPase: 'Regular' },
+    ];
+
+    expect(() => {
+      validarEstructuraVisitantes(cantidad, visitantes);
+    }).toThrow('La cantidad de entradas no coincide con los visitantes ingresados');
   });
 });

@@ -1,6 +1,6 @@
 import { validarEstructuraVisitantes } from '../src/compraEntradas.js';
 
-// ----------------  ETAPA DE RED ---------------- 
+// ----------------  ETAPA DE GREEN ---------------- 
 // ---------------- CASO DE PRUEBA 67 ----------------
 
 describe('Edades', () => {

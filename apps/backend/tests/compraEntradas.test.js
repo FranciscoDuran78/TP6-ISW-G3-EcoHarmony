@@ -1,4 +1,3 @@
-//import { validarCantidadEntradas } from '../src/compraEntradas.js';
 import {
   validarCantidadEntradas,
   validarLimiteAcumuladoPorFecha,
@@ -34,9 +33,7 @@ describe('Validación de cantidad de entradas', () => {
 });
 
 describe('Validación de límite acumulado por fecha', () => {
-  // =========================================================================
-  // [TC-13] - ETAPA RED: Permitir 4 entradas si ya compró 6 en esa fecha
-  // =========================================================================
+  // [TC-13] - Completado
   test('TC-13: debería permitir comprar 4 entradas si el usuario ya compró 6 para esa misma fecha (Total = 10)', () => {
     const previasEnFecha = 6;
     const cantidadActual = 4;
@@ -44,5 +41,17 @@ describe('Validación de límite acumulado por fecha', () => {
     const resultado = validarLimiteAcumuladoPorFecha(previasEnFecha, cantidadActual);
 
     expect(resultado).toBe(true);
+  });
+
+  // =========================================================================
+  // [TC-14] - ETAPA RED: Rechazar 5 entradas si ya compró 6 (Total = 11)
+  // =========================================================================
+  test('TC-14: debería lanzar un error al intentar comprar 5 entradas si ya compró 6 para esa misma fecha (Total = 11)', () => {
+    const previasEnFecha = 6;
+    const cantidadActual = 5;
+
+    expect(() => {
+      validarLimiteAcumuladoPorFecha(previasEnFecha, cantidadActual);
+    }).toThrow('Supera el límite de 10 entradas permitidas por fecha');
   });
 });

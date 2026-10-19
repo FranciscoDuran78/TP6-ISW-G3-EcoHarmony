@@ -1,5 +1,5 @@
 // compraEntradas.test.js
-const { validarCantidadEntradas } = require('../src/compraEntradas');
+import { validarCantidadEntradas } from '../src/compraEntradas.js';
 
 describe('Validación de cantidad de entradas', () => {
   // [TC-10] - Test previo ya en GREEN

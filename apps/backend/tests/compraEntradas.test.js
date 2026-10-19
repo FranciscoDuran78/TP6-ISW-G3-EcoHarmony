@@ -1,7 +1,7 @@
 import { validarEstructuraVisitantes } from '../src/compraEntradas.js';
 
-// ----------------  ETAPA DE REFACTORY ---------------- 
-// ---------------- CASO DE PRUEBA 68 ----------------
+// ----------------  ETAPA DE RED ---------------- 
+// ---------------- CASO DE PRUEBA 69 ----------------
 
 describe('Edades', () => {
   test('TC-67: rechaza un visitante con edad negativa', () => {
@@ -18,5 +18,19 @@ describe('Edades', () => {
         .toThrow('Cada visitante debe indicar su edad');
     });
 
+    test('conserva las edades y aplica el precio correspondiente', () => {
+        const visitantes = [
+        { edad: 8, tipoPase: 'Regular' },
+        { edad: 35, tipoPase: 'Regular' },
+        { edad: 62, tipoPase: 'Regular' },
+        ];
+
+        expect(calcularPreciosVisitantes(visitantes)).toEqual([
+        { edad: 8, tipoPase: 'Regular', precio: 5000 },
+        { edad: 35, tipoPase: 'Regular', precio: 10000 },
+        { edad: 62, tipoPase: 'Regular', precio: 5000 },
+        ]);
+    });
 });
+
 

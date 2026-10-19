@@ -1,5 +1,5 @@
-// ----------------  ETAPA DE REFACTORY ---------------- 
-// ---------------- CASO DE PRUEBA 68 ----------------
+// ----------------  ETAPA DE RED ---------------- 
+// ---------------- CASO DE PRUEBA 69 ----------------
 
 const MENSAJES_ERROR = {
   DISCREPANCIA_VISITANTES:
@@ -28,6 +28,8 @@ const validarEstructuraVisitantes = (cantidad, visitantes) => {
   return true;
 };
 
-export { MENSAJES_ERROR, validarEstructuraVisitantes };
+const calcularPreciosVisitantes = () => [];
+
+export { MENSAJES_ERROR, validarEstructuraVisitantes, calcularPreciosVisitantes};
 
 

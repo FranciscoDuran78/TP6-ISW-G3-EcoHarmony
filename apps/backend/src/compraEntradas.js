@@ -1,10 +1,14 @@
 const MAXIMO_ENTRADAS_POR_COMPRA = 10;
 const MAXIMO_ENTRADAS_POR_FECHA = 10;
 
+// ===========================================================================
+// [TC-17] - ETAPA REFACTOR: Incorporar mensaje VISITANTES_VACIOS al diccionario
+// ===========================================================================
 const MENSAJES_ERROR = {
   CANTIDAD_NO_ENTERA: 'La cantidad de entradas debe ser un número entero',
   LIMITE_ACUMULADO_FECHA: `Supera el límite de ${MAXIMO_ENTRADAS_POR_FECHA} entradas permitidas por fecha`,
   LIMITE_ENTRADAS_SUPERADO: `La cantidad de entradas no puede ser mayor a ${MAXIMO_ENTRADAS_POR_COMPRA}`,
+  VISITANTES_VACIOS: 'Debe detallar la edad y tipo de pase de cada visitante',
 };
 
 const validarCantidadEntradas = (cantidad) => {
@@ -34,12 +38,9 @@ const validarLimiteAcumuladoPorFecha = (
   return true;
 };
 
-// ===========================================================================
-// [TC-17] - ETAPA GREEN: Código mínimo para rechazar lista vacía
-// ===========================================================================
 const validarEstructuraVisitantes = (cantidad, visitantes) => {
-  if (visitantes.length === 0) {
-    throw new Error('Debe detallar la edad y tipo de pase de cada visitante');
+  if (!Array.isArray(visitantes) || visitantes.length === 0) {
+    throw new Error(MENSAJES_ERROR.VISITANTES_VACIOS);
   }
   return true;
 };

@@ -1,5 +1,5 @@
-// ----------------  ETAPA DE REFACTORY ---------------- 
-// ---------------- CASO DE PRUEBA 70 ----------------
+// ----------------  ETAPA DE GREEN ---------------- 
+// ---------------- CASO DE PRUEBA 71 ----------------
 
 const MENSAJES_ERROR = {
   DISCREPANCIA_VISITANTES:
@@ -67,7 +67,24 @@ const calcularPreciosVisitantes = (visitantes) => visitantes.map((visitante) => 
   ),
 }));
 
+const validarFechaUnica = (entradas) => {
+  if (!Array.isArray(entradas) || entradas.length === 0) {
+    throw new Error('La compra debe incluir entradas');
+  }
 
-export { MENSAJES_ERROR, validarEstructuraVisitantes, calcularPreciosVisitantes};
+  const [primeraEntrada] = entradas;
+  const primeraFecha = primeraEntrada.fechaVisita;
+  const todasCoinciden = entradas.every(
+    (entrada) => entrada.fechaVisita === primeraFecha,
+  );
+
+  if (!primeraFecha || !todasCoinciden) {
+    throw new Error('Todas las entradas deben tener la misma fecha de visita');
+  }
+
+  return true;
+};
+
+export { MENSAJES_ERROR, validarEstructuraVisitantes, calcularPreciosVisitantes, validarFechaUnica };
 
 

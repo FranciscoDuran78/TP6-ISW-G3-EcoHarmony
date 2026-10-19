@@ -1,6 +1,6 @@
-import { validarEstructuraVisitantes, calcularPreciosVisitantes } from '../src/compraEntradas.js';
+import { validarEstructuraVisitantes, calcularPreciosVisitantes, validarFechaUnica } from '../src/compraEntradas.js';
 
-// ----------------  ETAPA DE RED ---------------- 
+// ----------------  ETAPA DE GREEN ---------------- 
 // ---------------- CASO DE PRUEBA 71 ----------------
 
 describe('Edades', () => {

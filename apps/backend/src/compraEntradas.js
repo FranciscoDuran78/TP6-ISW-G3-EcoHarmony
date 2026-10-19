@@ -1,9 +1,6 @@
 const MAXIMO_ENTRADAS_POR_COMPRA = 10;
 const MAXIMO_ENTRADAS_POR_FECHA = 10;
 
-// ===========================================================================
-// [TC-18] - ETAPA REFACTOR: Diccionario final de errores bajo estándar Airbnb
-// ===========================================================================
 const MENSAJES_ERROR = {
   CANTIDAD_NO_ENTERA: 'La cantidad de entradas debe ser un número entero',
   DISCREPANCIA_VISITANTES: 'La cantidad de entradas no coincide con los visitantes ingresados',
@@ -39,6 +36,9 @@ const validarLimiteAcumuladoPorFecha = (
   return true;
 };
 
+// ===========================================================================
+// [TC-19] - ETAPA GREEN: Código mínimo para verificar presencia de edad
+// ===========================================================================
 const validarEstructuraVisitantes = (cantidad, visitantes) => {
   if (!Array.isArray(visitantes) || visitantes.length === 0) {
     throw new Error(MENSAJES_ERROR.VISITANTES_VACIOS);
@@ -46,6 +46,14 @@ const validarEstructuraVisitantes = (cantidad, visitantes) => {
 
   if (visitantes.length !== cantidad) {
     throw new Error(MENSAJES_ERROR.DISCREPANCIA_VISITANTES);
+  }
+
+  const faltaEdad = visitantes.some(
+    (visitante) => visitante.edad === null || visitante.edad === undefined,
+  );
+
+  if (faltaEdad) {
+    throw new Error('Cada visitante debe indicar su edad');
   }
 
   return true;

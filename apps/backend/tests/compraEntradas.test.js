@@ -1,6 +1,11 @@
+// import {
+//   validarCantidadEntradas,
+//   validarLimiteAcumuladoPorFecha,
+// } from '../src/compraEntradas.js';
 import {
   validarCantidadEntradas,
   validarLimiteAcumuladoPorFecha,
+  validarEstructuraVisitantes,
 } from '../src/compraEntradas.js';
 
 describe('Validación de cantidad de entradas', () => {
@@ -63,9 +68,7 @@ describe('Validación de límite acumulado por fecha', () => {
     }).toThrow('Supera el límite de 10 entradas permitidas por fecha');
   });
 
-  // =========================================================================
-  // [TC-16] - ETAPA RED: Falla porque el código del TC-15 aún no compara fechas
-  // =========================================================================
+  // [TC-16] - Completado
   test('TC-16: debería permitir comprar 10 entradas en una fecha nueva aunque tenga 10 en otra fecha distinta', () => {
     const entradasPrevias = 10;
     const cantidadActual = 10;
@@ -80,5 +83,19 @@ describe('Validación de límite acumulado por fecha', () => {
     );
 
     expect(resultado).toBe(true);
+  });
+});
+
+describe('Validación de estructura de visitantes en el pedido', () => {
+  // =========================================================================
+  // [TC-17] - ETAPA RED: Rechazar si no se envía el listado de visitantes
+  // =========================================================================
+  test('TC-17: debería lanzar un error si no se envía el listado de visitantes', () => {
+    const cantidad = 2;
+    const visitantes = [];
+
+    expect(() => {
+      validarEstructuraVisitantes(cantidad, visitantes);
+    }).toThrow('Debe detallar la edad y tipo de pase de cada visitante');
   });
 });

@@ -37,10 +37,13 @@ const validarLimiteAcumuladoPorFecha = (
   return true;
 };
 
+const validarEstructuraVisitantes = () => {};
+
 export {
   MAXIMO_ENTRADAS_POR_COMPRA,
   MAXIMO_ENTRADAS_POR_FECHA,
   MENSAJES_ERROR,
   validarCantidadEntradas,
   validarLimiteAcumuladoPorFecha,
+  validarEstructuraVisitantes,
 };

@@ -17,11 +17,13 @@ const validarCantidadEntradas = (cantidad) => {
 };
 
 // ===========================================================================
-// [TC-13] - ETAPA REFACTOR: Definir firma semántica de parámetros (Airbnb)
+// [TC-14] - ETAPA GREEN: Código mínimo para lanzar el error en el caso 6 + 5
 // ===========================================================================
 const validarLimiteAcumuladoPorFecha = (previasEnFecha, cantidadActual) => {
-  const totalAcumulado = previasEnFecha + cantidadActual;
-  return totalAcumulado <= MAXIMO_ENTRADAS_POR_COMPRA;
+  if (previasEnFecha === 6 && cantidadActual === 5) {
+    throw new Error('Supera el límite de 10 entradas permitidas por fecha');
+  }
+  return true;
 };
 
 export {

@@ -1,13 +1,24 @@
-//  ----------------  ETAPA DE RED ---------------- 
-// ---------------- CASO DE PRUEBA 10 ----------------
+// compraEntradas.test.js
 const { validarCantidadEntradas } = require('../src/compraEntradas');
 
 describe('Validación de cantidad de entradas', () => {
+  // [TC-10] - Test previo ya en GREEN
   test('TC-10: debería lanzar un error cuando la cantidad de entradas es mayor a 10', () => {
-    // Arrange (Preparar)
     const cantidadSolicitada = 11;
 
-    // Act & Assert (Actuar y Verificar)
+    expect(() => {
+      validarCantidadEntradas(cantidadSolicitada);
+    }).toThrow('La cantidad de entradas no puede ser mayor a 10');
+  });
+
+  // =========================================================================
+  // [TC-11] - ETAPA RED: Escribir la prueba para partición mayor a 10 (25)
+  // =========================================================================
+  test('TC-11: debería lanzar un error cuando la cantidad supera ampliamente el máximo (25)', () => {
+    // Arrange
+    const cantidadSolicitada = 25;
+
+    // Act & Assert
     expect(() => {
       validarCantidadEntradas(cantidadSolicitada);
     }).toThrow('La cantidad de entradas no puede ser mayor a 10');

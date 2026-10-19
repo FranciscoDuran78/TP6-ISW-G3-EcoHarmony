@@ -1,4 +1,4 @@
-// ----------------  ETAPA DE RED ---------------- 
+// ----------------  ETAPA DE GREEN ---------------- 
 // ---------------- CASO DE PRUEBA 69 ----------------
 
 const MENSAJES_ERROR = {
@@ -28,7 +28,16 @@ const validarEstructuraVisitantes = (cantidad, visitantes) => {
   return true;
 };
 
-const calcularPreciosVisitantes = () => [];
+const calcularPreciosVisitantes = (visitantes) => visitantes.map((visitante) => {
+  const precioBase = visitante.tipoPase === 'VIP' ? 20000 : 10000;
+  let precio = precioBase;
+  if (visitante.edad <= 3) {
+    precio = 0;
+  } else if (visitante.edad <= 15 || visitante.edad >= 60) {
+    precio = precioBase * 0.5;
+  }
+  return { ...visitante, precio };
+});
 
 export { MENSAJES_ERROR, validarEstructuraVisitantes, calcularPreciosVisitantes};
 

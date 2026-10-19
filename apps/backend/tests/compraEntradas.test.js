@@ -1,6 +1,6 @@
-import { validarEstructuraVisitantes } from '../src/compraEntradas.js';
+import { validarEstructuraVisitantes, calcularPreciosVisitantes } from '../src/compraEntradas.js';
 
-// ----------------  ETAPA DE RED ---------------- 
+// ----------------  ETAPA DE GREEN ---------------- 
 // ---------------- CASO DE PRUEBA 69 ----------------
 
 describe('Edades', () => {
@@ -18,7 +18,7 @@ describe('Edades', () => {
         .toThrow('Cada visitante debe indicar su edad');
     });
 
-    test('conserva las edades y aplica el precio correspondiente', () => {
+    test('TC-69: conserva las edades y aplica el precio correspondiente', () => {
         const visitantes = [
         { edad: 8, tipoPase: 'Regular' },
         { edad: 35, tipoPase: 'Regular' },

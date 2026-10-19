@@ -22,8 +22,11 @@ const validarCantidadEntradas = (cantidad) => {
   return true;
 };
 
+const validarLimiteAcumuladoPorFecha = () => {};
+
 export {
   MAXIMO_ENTRADAS_POR_COMPRA,
   MENSAJES_ERROR,
   validarCantidadEntradas,
+  validarLimiteAcumuladoPorFecha,
 };

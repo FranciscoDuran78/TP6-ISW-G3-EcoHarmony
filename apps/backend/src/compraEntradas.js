@@ -1,5 +1,5 @@
-// ----------------  ETAPA DE REFACTORY ---------------- 
-// ---------------- CASO DE PRUEBA 67 ----------------
+// ----------------  ETAPA DE RED ---------------- 
+// ---------------- CASO DE PRUEBA 68 ----------------
 
 const MENSAJES_ERROR = {
   DISCREPANCIA_VISITANTES:

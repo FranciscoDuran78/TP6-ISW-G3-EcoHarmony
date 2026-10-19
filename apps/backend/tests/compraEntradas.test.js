@@ -43,12 +43,22 @@ describe('Validación de límite acumulado por fecha', () => {
     expect(resultado).toBe(true);
   });
 
-  // =========================================================================
-  // [TC-14] - ETAPA RED: Rechazar 5 entradas si ya compró 6 (Total = 11)
-  // =========================================================================
+  // [TC-14] - Completado
   test('TC-14: debería lanzar un error al intentar comprar 5 entradas si ya compró 6 para esa misma fecha (Total = 11)', () => {
     const previasEnFecha = 6;
     const cantidadActual = 5;
+
+    expect(() => {
+      validarLimiteAcumuladoPorFecha(previasEnFecha, cantidadActual);
+    }).toThrow('Supera el límite de 10 entradas permitidas por fecha');
+  });
+
+  // =========================================================================
+  // [TC-15] - ETAPA RED: Rechazar 1 entrada si ya tiene 10 en esa fecha
+  // =========================================================================
+  test('TC-15: debería lanzar un error al intentar comprar 1 entrada si el usuario ya tiene 10 compradas para esa fecha', () => {
+    const previasEnFecha = 10;
+    const cantidadActual = 1;
 
     expect(() => {
       validarLimiteAcumuladoPorFecha(previasEnFecha, cantidadActual);

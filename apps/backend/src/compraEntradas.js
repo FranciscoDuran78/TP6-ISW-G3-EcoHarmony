@@ -1,4 +1,4 @@
-// ----------------  ETAPA DE GREEN ---------------- 
+// ----------------  ETAPA DE REFACTORY ---------------- 
 // ---------------- CASO DE PRUEBA 69 ----------------
 
 const MENSAJES_ERROR = {
@@ -28,16 +28,39 @@ const validarEstructuraVisitantes = (cantidad, visitantes) => {
   return true;
 };
 
-const calcularPreciosVisitantes = (visitantes) => visitantes.map((visitante) => {
-  const precioBase = visitante.tipoPase === 'VIP' ? 20000 : 10000;
-  let precio = precioBase;
-  if (visitante.edad <= 3) {
-    precio = 0;
-  } else if (visitante.edad <= 15 || visitante.edad >= 60) {
-    precio = precioBase * 0.5;
+const PRECIOS_PASE = {
+  VIP: 20000,
+  REGULAR: 10000,
+};
+const EDAD_GRATIS_MAXIMA = 3;
+const EDAD_DESCUENTO_MAXIMA = 15;
+const EDAD_DESCUENTO_MINIMA = 60;
+const PORCENTAJE_DESCUENTO = 0.5;
+
+const obtenerPrecioBase = (tipoPase) => (
+  tipoPase === 'VIP' ? PRECIOS_PASE.VIP : PRECIOS_PASE.REGULAR
+);
+
+const calcularPrecioConDescuentoEdad = (precioBase, edad) => {
+  if (edad <= EDAD_GRATIS_MAXIMA) {
+    return 0;
   }
-  return { ...visitante, precio };
-});
+
+  if (edad <= EDAD_DESCUENTO_MAXIMA || edad >= EDAD_DESCUENTO_MINIMA) {
+    return precioBase * PORCENTAJE_DESCUENTO;
+  }
+
+  return precioBase;
+};
+
+const calcularPreciosVisitantes = (visitantes) => visitantes.map((visitante) => ({
+  ...visitante,
+  precio: calcularPrecioConDescuentoEdad(
+    obtenerPrecioBase(visitante.tipoPase),
+    visitante.edad,
+  ),
+}));
+
 
 export { MENSAJES_ERROR, validarEstructuraVisitantes, calcularPreciosVisitantes};
 

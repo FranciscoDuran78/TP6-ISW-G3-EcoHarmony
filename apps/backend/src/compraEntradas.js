@@ -1,4 +1,4 @@
-// ----------------  ETAPA DE RED ---------------- 
+// ----------------  ETAPA DE GREEN ---------------- 
 // ---------------- CASO DE PRUEBA 68 ----------------
 
 const MENSAJES_ERROR = {
@@ -8,6 +8,10 @@ const MENSAJES_ERROR = {
 };
 
 const validarEdadNoNegativa = (visitante) => {
+  if (visitante.edad === null || visitante.edad === undefined) {
+    throw new Error('Cada visitante debe indicar su edad');
+  }
+
   if (visitante.edad < 0) {
     throw new Error(MENSAJES_ERROR.EDAD_NO_VALIDA);
   }

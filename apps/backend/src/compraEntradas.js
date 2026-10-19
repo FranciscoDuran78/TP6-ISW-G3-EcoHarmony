@@ -1,7 +1,11 @@
 const MAXIMO_ENTRADAS_POR_COMPRA = 10;
 
+// ===========================================================================
+// [TC-14] - ETAPA REFACTOR: Extraer mensaje de error acumulado a constante
+// ===========================================================================
 const MENSAJES_ERROR = {
   CANTIDAD_NO_ENTERA: 'La cantidad de entradas debe ser un número entero',
+  LIMITE_ACUMULADO_FECHA: 'Supera el límite de 10 entradas permitidas por fecha',
   LIMITE_ENTRADAS_SUPERADO: `La cantidad de entradas no puede ser mayor a ${MAXIMO_ENTRADAS_POR_COMPRA}`,
 };
 
@@ -16,12 +20,9 @@ const validarCantidadEntradas = (cantidad) => {
   return true;
 };
 
-// ===========================================================================
-// [TC-14] - ETAPA GREEN: Código mínimo para lanzar el error en el caso 6 + 5
-// ===========================================================================
 const validarLimiteAcumuladoPorFecha = (previasEnFecha, cantidadActual) => {
   if (previasEnFecha === 6 && cantidadActual === 5) {
-    throw new Error('Supera el límite de 10 entradas permitidas por fecha');
+    throw new Error(MENSAJES_ERROR.LIMITE_ACUMULADO_FECHA);
   }
   return true;
 };

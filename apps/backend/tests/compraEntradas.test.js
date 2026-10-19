@@ -1,7 +1,7 @@
 import { validarEstructuraVisitantes, calcularPreciosVisitantes } from '../src/compraEntradas.js';
 
-// ----------------  ETAPA DE REFACTORY ---------------- 
-// ---------------- CASO DE PRUEBA 69 ----------------
+// ----------------  ETAPA DE RED ---------------- 
+// ---------------- CASO DE PRUEBA 70 ----------------
 
 describe('Edades', () => {
   test('TC-67: rechaza un visitante con edad negativa', () => {
@@ -33,4 +33,14 @@ describe('Edades', () => {
     });
 });
 
+describe('Visitantes y entradas', () => {
+  test('TC-70: rechaza un visitante sin tipo de pase', () => {
+    const visitantes = [
+      { edad: 25, tipoPase: 'Regular' },
+      { edad: 35, tipoPase: '' },
+    ];
 
+    expect(() => validarEstructuraVisitantes(2, visitantes))
+      .toThrow('Cada visitante debe indicar tipo de pase VIP o Regular');
+  });
+});

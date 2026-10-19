@@ -1,6 +1,6 @@
 import { validarEstructuraVisitantes, calcularPreciosVisitantes, validarFechaUnica } from '../src/compraEntradas.js';
 
-// ----------------  ETAPA DE GREEN ---------------- 
+// ----------------  ETAPA DE REFACTORY ---------------- 
 // ---------------- CASO DE PRUEBA 71 ----------------
 
 describe('Edades', () => {

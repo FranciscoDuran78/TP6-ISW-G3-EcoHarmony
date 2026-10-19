@@ -1,4 +1,4 @@
-// ----------------  ETAPA DE GREEN ---------------- 
+// ----------------  ETAPA DE REFACTORY ---------------- 
 // ---------------- CASO DE PRUEBA 71 ----------------
 
 const MENSAJES_ERROR = {
@@ -6,7 +6,9 @@ const MENSAJES_ERROR = {
     'La cantidad de entradas no coincide con los visitantes ingresados',
   EDAD_NO_VALIDA: 'La edad no es válida',
   VISITANTE_SIN_EDAD: 'Cada visitante debe indicar su edad',
-  VISITANTE_SIN_PASE: 'Cada visitante debe indicar tipo de pase VIP o Regular'
+  VISITANTE_SIN_PASE: 'Cada visitante debe indicar tipo de pase VIP o Regular',
+  ENTRADAS_VACIAS: 'La compra debe incluir entradas',
+  FECHA_UNICA_REQUERIDA: 'Todas las entradas deben tener la misma fecha de visita'
 };
 
 const validarDatosIndividualesVisitante = (visitante) => {
@@ -69,7 +71,7 @@ const calcularPreciosVisitantes = (visitantes) => visitantes.map((visitante) => 
 
 const validarFechaUnica = (entradas) => {
   if (!Array.isArray(entradas) || entradas.length === 0) {
-    throw new Error('La compra debe incluir entradas');
+    throw new Error(MENSAJES_ERROR.ENTRADAS_VACIAS);
   }
 
   const [primeraEntrada] = entradas;
@@ -79,7 +81,7 @@ const validarFechaUnica = (entradas) => {
   );
 
   if (!primeraFecha || !todasCoinciden) {
-    throw new Error('Todas las entradas deben tener la misma fecha de visita');
+    throw new Error(MENSAJES_ERROR.FECHA_UNICA_REQUERIDA);
   }
 
   return true;

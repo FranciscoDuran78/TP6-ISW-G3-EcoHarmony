@@ -1,7 +1,3 @@
-// import {
-//   validarCantidadEntradas,
-//   validarLimiteAcumuladoPorFecha,
-// } from '../src/compraEntradas.js';
 import {
   validarCantidadEntradas,
   validarLimiteAcumuladoPorFecha,
@@ -110,9 +106,7 @@ describe('Validación de estructura de visitantes en el pedido', () => {
     }).toThrow('La cantidad de entradas no coincide con los visitantes ingresados');
   });
 
-  // =========================================================================
-  // [TC-19] - ETAPA RED: Rechazar si a un visitante le falta indicar la edad
-  // =========================================================================
+  // [TC-19] - Completado
   test('TC-19: debería lanzar un error si a un visitante le falta indicar la edad', () => {
     const cantidad = 1;
     const visitantes = [{ edad: null, tipoPase: 'VIP' }];
@@ -120,5 +114,17 @@ describe('Validación de estructura de visitantes en el pedido', () => {
     expect(() => {
       validarEstructuraVisitantes(cantidad, visitantes);
     }).toThrow('Cada visitante debe indicar su edad');
+  });
+
+  // =========================================================================
+  // [TC-20] - ETAPA RED: Rechazar visitante con tipoPase vacío
+  // =========================================================================
+  test('TC-20: debería lanzar un error si a un visitante le falta indicar el tipo de pase', () => {
+    const cantidad = 1;
+    const visitantes = [{ edad: 25, tipoPase: '' }];
+
+    expect(() => {
+      validarEstructuraVisitantes(cantidad, visitantes);
+    }).toThrow('Cada visitante debe indicar tipo de pase VIP o Regular');
   });
 });

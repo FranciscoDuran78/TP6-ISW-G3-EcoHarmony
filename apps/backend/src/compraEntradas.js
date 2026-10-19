@@ -1,9 +1,6 @@
 const MAXIMO_ENTRADAS_POR_COMPRA = 10;
 const MAXIMO_ENTRADAS_POR_FECHA = 10;
 
-// ===========================================================================
-// [TC-17] - ETAPA REFACTOR: Incorporar mensaje VISITANTES_VACIOS al diccionario
-// ===========================================================================
 const MENSAJES_ERROR = {
   CANTIDAD_NO_ENTERA: 'La cantidad de entradas debe ser un número entero',
   LIMITE_ACUMULADO_FECHA: `Supera el límite de ${MAXIMO_ENTRADAS_POR_FECHA} entradas permitidas por fecha`,
@@ -38,10 +35,18 @@ const validarLimiteAcumuladoPorFecha = (
   return true;
 };
 
+// ===========================================================================
+// [TC-18] - ETAPA GREEN: Código mínimo para verificar coincidencia de longitud
+// ===========================================================================
 const validarEstructuraVisitantes = (cantidad, visitantes) => {
   if (!Array.isArray(visitantes) || visitantes.length === 0) {
     throw new Error(MENSAJES_ERROR.VISITANTES_VACIOS);
   }
+
+  if (visitantes.length !== cantidad) {
+    throw new Error('La cantidad de entradas no coincide con los visitantes ingresados');
+  }
+
   return true;
 };
 

@@ -1,7 +1,4 @@
 const MAXIMO_ENTRADAS_POR_COMPRA = 10;
-// ===========================================================================
-// [TC-15] - ETAPA REFACTOR: Constante específica para límite diario por fecha
-// ===========================================================================
 const MAXIMO_ENTRADAS_POR_FECHA = 10;
 
 const MENSAJES_ERROR = {
@@ -21,8 +18,20 @@ const validarCantidadEntradas = (cantidad) => {
   return true;
 };
 
-const validarLimiteAcumuladoPorFecha = (previasEnFecha, cantidadActual) => {
-  const totalAcumulado = previasEnFecha + cantidadActual;
+// ===========================================================================
+// [TC-16] - ETAPA GREEN: Si las fechas son distintas, no acumula las previas
+// ===========================================================================
+const validarLimiteAcumuladoPorFecha = (
+  previas,
+  cantidadActual,
+  fechaActual,
+  fechaPrevia,
+) => {
+  if (fechaActual && fechaPrevia && fechaActual !== fechaPrevia) {
+    return cantidadActual <= MAXIMO_ENTRADAS_POR_FECHA;
+  }
+
+  const totalAcumulado = previas + cantidadActual;
 
   if (totalAcumulado > MAXIMO_ENTRADAS_POR_FECHA) {
     throw new Error(MENSAJES_ERROR.LIMITE_ACUMULADO_FECHA);

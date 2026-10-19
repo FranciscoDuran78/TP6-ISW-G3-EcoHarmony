@@ -19,19 +19,17 @@ const validarCantidadEntradas = (cantidad) => {
 };
 
 // ===========================================================================
-// [TC-16] - ETAPA GREEN: Si las fechas son distintas, no acumula las previas
+// [TC-16] - ETAPA REFACTOR: Lógica limpia para producción
 // ===========================================================================
 const validarLimiteAcumuladoPorFecha = (
   previas,
   cantidadActual,
-  fechaActual,
-  fechaPrevia,
+  fechaActual = null,
+  fechaPrevia = null,
 ) => {
-  if (fechaActual && fechaPrevia && fechaActual !== fechaPrevia) {
-    return cantidadActual <= MAXIMO_ENTRADAS_POR_FECHA;
-  }
-
-  const totalAcumulado = previas + cantidadActual;
+  const sonFechasDistintas = fechaActual && fechaPrevia && fechaActual !== fechaPrevia;
+  const previasEnMismaFecha = sonFechasDistintas ? 0 : previas;
+  const totalAcumulado = previasEnMismaFecha + cantidadActual;
 
   if (totalAcumulado > MAXIMO_ENTRADAS_POR_FECHA) {
     throw new Error(MENSAJES_ERROR.LIMITE_ACUMULADO_FECHA);

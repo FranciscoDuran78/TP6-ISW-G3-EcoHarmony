@@ -1,5 +1,5 @@
-// ----------------  ETAPA DE REFACTORY ---------------- 
-// ---------------- CASO DE PRUEBA 69 ----------------
+// ----------------  ETAPA DE GREEN ---------------- 
+// ---------------- CASO DE PRUEBA 70 ----------------
 
 const MENSAJES_ERROR = {
   DISCREPANCIA_VISITANTES:
@@ -16,6 +16,11 @@ const validarEdadNoNegativa = (visitante) => {
   if (visitante.edad < 0) {
     throw new Error(MENSAJES_ERROR.EDAD_NO_VALIDA);
   }
+
+  if (!visitante.tipoPase || visitante.tipoPase.trim() === '') {
+    throw new Error('Cada visitante debe indicar tipo de pase VIP o Regular');
+}
+
 };
 
 const validarEstructuraVisitantes = (cantidad, visitantes) => {

@@ -8,6 +8,7 @@ const ESTADOS = Object.freeze({
 const ESTADO_POR_RESULTADO = Object.freeze({
   aprobada: ESTADOS.PAGADA,
   rechazada: ESTADOS.RECHAZADA,
+  cancelada: ESTADOS.CANCELADA,
 });
 
 function crearCompra({ formaPago, compraValida = true }) {
@@ -46,6 +47,9 @@ function renderPago(compra) {
   }
   if (compra.estado === ESTADOS.RECHAZADA) {
   return '<p role="status">Transacción rechazada</p>';
+}
+if (compra.estado === ESTADOS.CANCELADA) {
+  return '<p role="status">Transacción cancelada</p>';
 }
 
   return `

@@ -53,6 +53,7 @@ describe('Visitantes y entradas', () => {
 
   expect(validarEstructuraVisitantes(2, visitantes)).toBe(true);
 });
+
   test('TC-73: rechaza menos visitantes que entradas', () => {
   const visitantes = [
     { edad: 25, tipoPase: 'Regular' },
@@ -73,7 +74,6 @@ describe('Visitantes y entradas', () => {
       .toThrow('La cantidad de entradas no coincide con los visitantes ingresados');
   });
 
-
 describe('Fecha única por compra', () => {
   test('TC-71: acepta varias entradas asociadas a la misma fecha válida', () => {
     const entradas = [
@@ -84,4 +84,15 @@ describe('Fecha única por compra', () => {
 
     expect(validarFechaUnica(entradas)).toBe(true);
   });
+
+  test('TC-75: rechaza entradas de una compra con fechas distintas', () => {
+  const entradas = [
+    { fechaVisita: '2026-11-20' },
+    { fechaVisita: '2026-11-21' },
+  ];
+
+  expect(() => validarFechaUnica(entradas))
+    .toThrow('Todas las entradas deben tener la misma fecha de visita');
+  });
+
 });

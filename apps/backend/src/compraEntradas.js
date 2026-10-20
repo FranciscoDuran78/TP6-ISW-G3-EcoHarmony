@@ -42,11 +42,13 @@ const validarLimiteAcumuladoPorFecha = (
 };
 
 const validarDatosIndividualesVisitante = (visitante) => {
-  if (visitante.edad === null || visitante.edad === undefined) {
+  if (!visitante || visitante.edad === null || visitante.edad === undefined
+    || visitante.edad === '' || !Number.isFinite(Number(visitante.edad))
+    || Number(visitante.edad) < 0) {
     throw new Error(MENSAJES_ERROR.VISITANTE_SIN_EDAD);
   }
 
-  if (!visitante.tipoPase || visitante.tipoPase.trim() === '') {
+  if (!['VIP', 'Regular'].includes(visitante.tipoPase)) {
     throw new Error(MENSAJES_ERROR.VISITANTE_SIN_PASE);
   }
 };

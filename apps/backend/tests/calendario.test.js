@@ -1,6 +1,6 @@
-// Jest en modo ESM necesita la extensión del archivo para resolver este import.
-// eslint-disable-next-line import/extensions
-import { obtenerCalendarioDisponible } from '../../frontend/src/calendario.js';
+// Esta prueba importa el helper para cubrir el calendario sin requerir un runner frontend.
+// eslint-disable-next-line import/no-relative-packages, import/extensions
+import obtenerCalendarioDisponible from '../../frontend/src/calendario.js';
 
 describe('Calendario de compra', () => {
   test('TC-88/89: bloquea el 25 de diciembre y el 1 de enero', () => {

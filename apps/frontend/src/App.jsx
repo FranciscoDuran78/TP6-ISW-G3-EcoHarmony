@@ -1,27 +1,11 @@
 import React, { useState } from 'react';
+import obtenerCalendarioDisponible from './calendario.js';
 import './App.css';
 
 const PRECIOS_BASE = {
   Regular: 10000,
   VIP: 20000,
 };
-
-const DIAS_CALENDARIO_DEMO = [
-  { diaSemana: 'Lun', numero: 19, fechaIso: '2026-10-19', cerrado: true },
-  { diaSemana: 'Mar', numero: 20, fechaIso: '2026-10-20', cerrado: false },
-  { diaSemana: 'Mié', numero: 21, fechaIso: '2026-10-21', cerrado: false },
-  { diaSemana: 'Jue', numero: 22, fechaIso: '2026-10-22', cerrado: false },
-  { diaSemana: 'Vie', numero: 23, fechaIso: '2026-10-23', cerrado: false },
-  { diaSemana: 'Sáb', numero: 24, fechaIso: '2026-10-24', cerrado: false },
-  { diaSemana: 'Dom', numero: 25, fechaIso: '2026-10-25', cerrado: false },
-  { diaSemana: 'Lun', numero: 26, fechaIso: '2026-10-26', cerrado: true },
-  { diaSemana: 'Mar', numero: 27, fechaIso: '2026-10-27', cerrado: false },
-  { diaSemana: 'Mié', numero: 28, fechaIso: '2026-10-28', cerrado: false },
-  { diaSemana: 'Jue', numero: 29, fechaIso: '2026-10-29', cerrado: false },
-  { diaSemana: 'Vie', numero: 30, fechaIso: '2026-10-30', cerrado: false },
-  { diaSemana: 'Sáb', numero: 31, fechaIso: '2026-10-31', cerrado: false },
-  { diaSemana: 'Dom', numero: 1, fechaIso: '2026-11-01', cerrado: false },
-];
 
 const calcularPrecioVisitante = (edad, tipoPase) => {
   const edadNumerica = Number(edad);
@@ -50,7 +34,10 @@ const obtenerEtiquetaDescuento = (edad) => {
 
 function App() {
   const [pasoActual, setPasoActual] = useState('FORMULARIO');
-  const [fechaVisita, setFechaVisita] = useState('2026-10-24');
+  const [diasCalendario] = useState(obtenerCalendarioDisponible);
+  const [fechaVisita, setFechaVisita] = useState(() => (
+    diasCalendario.find((dia) => !dia.cerrado)?.fechaIso || ''
+  ));
   const [cantidadEntradas, setCantidadEntradas] = useState(3);
   const [visitantes, setVisitantes] = useState([
     { id: 1, edad: 28, tipoPase: 'VIP' },
@@ -59,6 +46,8 @@ function App() {
   ]);
   const [formaPago, setFormaPago] = useState('TARJETA');
   const [mensajeError, setMensajeError] = useState('');
+  const [compraConfirmada, setCompraConfirmada] = useState(null);
+  const [resultadoTransaccion, setResultadoTransaccion] = useState(null);
 
   const actualizarCantidadEntradas = (nuevaCantidad) => {
     const valor = Number(nuevaCantidad);
@@ -102,7 +91,32 @@ function App() {
     0,
   );
 
-  const manejarConfirmarFormulario = (evento) => {
+  const enviarCompra = async () => {
+    setMensajeError('');
+    try {
+      const respuesta = await fetch('/api/compras', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fechaVisita,
+          visitantes: visitantes.map(({ edad, tipoPase }) => ({ edad: Number(edad), tipoPase })),
+          formaPago,
+        }),
+      });
+      const resultado = await respuesta.json();
+      if (resultado.compra?.pago) setResultadoTransaccion(resultado.compra.pago);
+      if (!respuesta.ok) {
+        setMensajeError(resultado.error || 'No se pudo procesar la compra.');
+        return;
+      }
+      setCompraConfirmada(resultado.compra);
+      setPasoActual('CONFIRMACION');
+    } catch {
+      setMensajeError('No se pudo contactar al servicio de compras. Intentá nuevamente.');
+    }
+  };
+
+  const manejarConfirmarFormulario = async (evento) => {
     evento.preventDefault();
 
     if (!fechaVisita) {
@@ -110,17 +124,21 @@ function App() {
       return;
     }
 
-    if (cantidadEntradas > 10 || cantidadEntradas < 1) {
-      setMensajeError('La cantidad de entradas no puede ser mayor a 10.');
+    if (!Number.isInteger(cantidadEntradas) || cantidadEntradas > 10 || cantidadEntradas < 1) {
+      setMensajeError('La cantidad de entradas debe ser de 1 a 10.');
       return;
     }
 
-    const faltaDatoVisitante = visitantes.some(
-      (vis) => vis.edad === '' || vis.edad === null || !vis.tipoPase,
-    );
+    const faltaEdad = visitantes.some((vis) => vis.edad === '' || vis.edad === null);
 
-    if (faltaDatoVisitante) {
-      setMensajeError('Cada visitante debe indicar su edad y tipo de pase (VIP o Regular).');
+    if (faltaEdad) {
+      setMensajeError('Cada visitante debe indicar su edad.');
+      return;
+    }
+
+    const faltaPase = visitantes.some((vis) => !['VIP', 'Regular'].includes(vis.tipoPase));
+    if (faltaPase) {
+      setMensajeError('Cada visitante debe indicar tipo de pase VIP o Regular.');
       return;
     }
 
@@ -134,7 +152,7 @@ function App() {
     if (formaPago === 'TARJETA') {
       setPasoActual('MERCADO_PAGO');
     } else {
-      setPasoActual('CONFIRMACION');
+      await enviarCompra();
     }
   };
 
@@ -233,7 +251,7 @@ function App() {
                 </p>
 
                 <div className="grilla-calendario" id="selector-fecha">
-                  {DIAS_CALENDARIO_DEMO.map((item) => {
+                  {diasCalendario.map((item) => {
                     const estaSeleccionado = fechaVisita === item.fechaIso;
                     let claseDia = 'celda-dia';
                     if (item.cerrado) claseDia += ' dia-deshabilitado';
@@ -473,6 +491,12 @@ function App() {
               </div>
 
               <div className="acciones-mp">
+                {resultadoTransaccion?.estado === 'RECHAZADA' && (
+                  <p role="alert">
+                    Transacción rechazada: {resultadoTransaccion.codigo || 'resultado no disponible'}.
+                    La compra no fue confirmada.
+                  </p>
+                )}
                 <button
                   type="button"
                   className="btn-cancelar"
@@ -488,7 +512,7 @@ function App() {
                 <button
                   type="button"
                   className="btn-confirmar"
-                  onClick={() => setPasoActual('CONFIRMACION')}
+                  onClick={enviarCompra}
                 >
                   Pagar ${totalCompra.toLocaleString('es-AR')} y Confirmar
                 </button>
@@ -510,24 +534,37 @@ function App() {
               <div className="grilla-datos-finales">
                 <div className="dato-final">
                   <span>Cantidad de entradas compradas</span>
-                  <strong>{visitantes.length} entradas</strong>
+                  <strong>{compraConfirmada?.cantidad || visitantes.length} entradas</strong>
                 </div>
                 <div className="dato-final">
                   <span>Fecha de visita</span>
-                  <strong>{fechaVisita}</strong>
+                  <strong>{compraConfirmada?.fechaVisita || fechaVisita}</strong>
                 </div>
                 <div className="dato-final">
                   <span>Medio de pago</span>
                   <strong>
-                    {formaPago === 'TARJETA'
+                    {compraConfirmada?.formaPago === 'TARJETA'
                       ? 'Tarjeta de Crédito (Mercado Pago)'
                       : 'Efectivo en Boletería'}
                   </strong>
                 </div>
                 <div className="dato-final">
+                  <span>Total de la compra</span>
+                  <strong>${(compraConfirmada?.total ?? totalCompra).toLocaleString('es-AR')}</strong>
+                </div>
+                <div className="dato-final">
+                  <span>Resultado de la transacción</span>
+                  <strong>
+                    {compraConfirmada?.pago?.estado || 'Pendiente'}
+                    {compraConfirmada?.pago?.codigo
+                      ? ` · ${compraConfirmada.pago.codigo}`
+                      : ''}
+                  </strong>
+                </div>
+                <div className="dato-final">
                   <span>Estado de la compra</span>
-                  <strong className={formaPago === 'TARJETA' ? 'estado-ok' : 'estado-pendiente'}>
-                    {formaPago === 'TARJETA'
+                  <strong className={compraConfirmada?.pagada ? 'estado-ok' : 'estado-pendiente'}>
+                    {compraConfirmada?.estado === 'CONFIRMADA'
                       ? 'CONFIRMADA'
                       : 'PENDIENTE DE VALIDACIÓN EN BOLETERÍA'}
                   </strong>
@@ -539,7 +576,7 @@ function App() {
             <section className="tarjeta-principal cliente-email">
               <div className="cabecera-ventana-mail">
                 <span>📧 Simulación de Envío de Correo de Confirmación</span>
-                <span className="tag-orden">Orden #EH-2026-0849</span>
+                <span className="tag-orden">Orden #{compraConfirmada?.id || 'pendiente'}</span>
               </div>
 
               <div className="metadatos-mail">
@@ -550,7 +587,7 @@ function App() {
                   <strong>Para:</strong> visitante@ecoharmony.com.ar
                 </p>
                 <p>
-                  <strong>Asunto:</strong> Confirmación de compra de entradas - Visita {fechaVisita}
+                  <strong>Asunto:</strong> Confirmación de compra de entradas - Visita {compraConfirmada?.fechaVisita || fechaVisita}
                 </p>
               </div>
 
@@ -558,7 +595,13 @@ function App() {
                 <p>Hola <strong>Bruno</strong>,</p>
                 <p>
                   Te enviamos el resumen representativo de tu transacción para ingresar a
-                  <strong> EcoHarmony Park</strong> el día <strong>{fechaVisita}</strong>:
+                  <strong> EcoHarmony Park</strong> el día <strong>{compraConfirmada?.fechaVisita || fechaVisita}</strong>:
+                </p>
+                <p>
+                  <strong>Total:</strong> ${(compraConfirmada?.total ?? totalCompra).toLocaleString('es-AR')}
+                  {' · '}
+                  <strong>Transacción:</strong> {compraConfirmada?.pago?.estado || 'PENDIENTE'}
+                  {compraConfirmada?.pago?.codigo ? ` (${compraConfirmada.pago.codigo})` : ''}
                 </p>
 
                 <table className="tabla-mail">
@@ -596,8 +639,12 @@ function App() {
                 <div className="caja-adjunto">
                   <div className="icono-pdf">📄</div>
                   <div className="info-adjunto">
-                    <strong>Comprobante_Entradas_EcoHarmony_EH0849.pdf</strong>
-                    <span>Archivo PDF adjunto · Incluye {visitantes.length} códigos QR de acceso (245 KB)</span>
+                    <strong>{compraConfirmada?.correo?.adjunto?.nombre || 'comprobante-entradas.json'}</strong>
+                    <span>
+                      {compraConfirmada?.correo?.estado === 'FALLIDO'
+                        ? `Compra confirmada; correo no enviado: ${compraConfirmada.correo.error}`
+                        : `Adjunto simulado · Incluye el resumen de ${compraConfirmada?.cantidad || visitantes.length} entradas`}
+                    </span>
                   </div>
                   <button type="button" className="btn-descargar">
                     Descargar Adjunto

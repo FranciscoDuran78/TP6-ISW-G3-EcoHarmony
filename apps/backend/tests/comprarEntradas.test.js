@@ -2,6 +2,7 @@ import {
   esTipoPaseValido,
   obtenerPrecioBasePase,
   calcularPrecioVisitante,
+  calcularTotalCompra,
 } from '../src/comprarEntradas.js';
 
 describe('Casos TC-63 al TC-66: Precios y tipos de pase', () => {
@@ -46,6 +47,25 @@ describe('Casos TC-63 al TC-66: Precios y tipos de pase', () => {
       const precio = calcularPrecioVisitante(visitante);
 
       expect(precio).toBe(10000);
+    });
+
+    
+  });
+  describe('TC-66: Calcular correctamente subtotal y total de varios pases con edades diferentes', () => {
+    it('debe desglosar subtotal de 20000, descuentos de 5000 y total final de 25000', () => {
+      const visitantes = [
+        { edad: 30, tipoPase: 'VIP' },
+        { edad: 10, tipoPase: 'regular' },
+        { edad: 3, tipoPase: 'regular' },
+      ];
+
+      const resultado = calcularTotalCompra(visitantes);
+
+      expect(resultado).toEqual({
+        subtotal: 20000,
+        descuentos: 5000,
+        total: 25000,
+      });
     });
   });
 });

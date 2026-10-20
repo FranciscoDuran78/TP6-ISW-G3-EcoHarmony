@@ -1,8 +1,16 @@
+const ESTADOS = Object.freeze({
+  PENDIENTE: "pendiente",
+  VALIDADA: "validada",
+  PAGADA: "pagada",
+  RECHAZADA: "rechazada",
+  CANCELADA: "cancelada",
+});
+
 function crearCompra({ formaPago, compraValida = true }) {
   return {
     formaPago,
     compraValida,
-    estado: "pendiente",
+    estado: ESTADOS.PENDIENTE,,
     pagada: false,
   };
 }
@@ -13,7 +21,7 @@ function confirmarPagoBoleteria(compra, validacion) {
   }
 
   if (validacion === "aprobada") {
-    compra.estado = "validada";
+    compra.estado = ESTADOS.VALIDADA;
     compra.pagada = true;
   }
 

@@ -6,6 +6,13 @@ const validarUsuario = (usuario) => {
 
   if (!usuario.registrado)
     throw new Error("Se permite la compra solo a usuarios registrados");
+
+  if (
+    !usuario.id ||
+    typeof usuario.id !== "string" ||
+    typeof usuario.id !== "number"
+  )
+    throw new Error("Identificador de usuario inválido");
 };
 
 export { validarUsuario };

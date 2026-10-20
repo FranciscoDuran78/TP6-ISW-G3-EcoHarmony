@@ -10,6 +10,7 @@ const MENSAJES_ERROR_FECHA = {
 
 const LUNES = 1;
 const LIMITE_MINUTOS_17_30 = 17 * 60 + 30;
+const FERIADOS_PARQUE = ['2026-12-25']
 
 const convertirHoraAMinutos = (horaStr) => {
   const [horas, minutos] = horaStr.split(':').map(Number);
@@ -58,9 +59,9 @@ const validarDiaLaborable = (fechaObj) => {
   }
 };
 
-const validarFeriado = (fechaVisita, feriados = []) => {
+const validarFeriado = (fechaVisita, feriados = FERIADOS_PARQUE) => {
   const listaFeriados = Array.isArray(feriados) ? feriados : [];
-  if (listaFeriados.includes(fechaVisita)) {
+  if (listaFeriados.some(f => fechaVisita.endsWith(f.slice(4)))) { 
     throw new Error(MENSAJES_ERROR_FECHA.PARQUE_CERRADO_FERIADO);
   }
 };
@@ -81,17 +82,18 @@ const validarRangoFechaVisita = (fechaObj) => {
   }
 };
 
-const validarFechaVisita = (fechaVisita, horaCompraActual = null, parqueAbierto = true, feriados = []) => {
+const validarFechaVisita = (fechaVisita, horaCompraActual = null, parqueAbierto = true, feriados = FERIADOS_PARQUE) => {
   if (!parqueAbierto) {
     return false;
   }
 
   validarPresenciaFecha(fechaVisita);
-  validarFeriado(fechaVisita, feriados);
   
   const fechaObj = parsearFechaLocal(fechaVisita);
-  
+
+  validarFeriado(fechaVisita, feriados);
   validarDiaLaborable(fechaObj);
+
   validarRangoFechaVisita(fechaObj);
   validarHoraCompraMismoDia(horaCompraActual);
 

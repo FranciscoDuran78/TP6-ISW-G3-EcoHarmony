@@ -58,5 +58,16 @@ describe('Validación de Fecha de Visita y Calendario', () => {
     const resultado = validarFechaVisita(fechaStr, null, true, []);
     expect(resultado).toBe(true);
   });
+
+  test('TC-27: deshabilitar los lunes en el calendario', () => {
+      const fechaLunes = new Date();
+      fechaLunes.setDate(fechaLunes.getDate() + ((1 + 7 - fechaLunes.getDay()) % 7 || 7));
+      const fechaStr = fechaLunes.toISOString().split('T')[0];
+
+      expect(() => {
+        validarFechaVisita(fechaStr);
+      }).toThrow('El parque se encuentra cerrado los días lunes');
+    });
+
 });
 

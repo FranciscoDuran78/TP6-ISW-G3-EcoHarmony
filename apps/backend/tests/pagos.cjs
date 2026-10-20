@@ -37,6 +37,10 @@ function renderPago(compra) {
     return "";
   }
 
+  if (compra.estado === ESTADOS.PAGADA) {
+    return '<p role="status">Transacción aprobada</p>';
+  }
+
   return `
     <section aria-label="Mercado Pago simulado">
       <h2>Mercado Pago — Simulación</h2>
@@ -60,6 +64,22 @@ function crearIntento(numero) {
     estado: ESTADOS.PENDIENTE,
   };
 }
+
+function resolverTransaccion(compra, resultado) {
+  if (resultado !== "aprobada") {
+    throw new Error("Resultado no soportado");
+  }
+
+  const intento = compra.intentos.at(-1);
+
+  intento.estado = resultado;
+  compra.estado = ESTADOS.PAGADA;
+  compra.pagada = true;
+
+  return compra;
+}
+
+exports.resolverTransaccion = resolverTransaccion;
 
 exports.renderPago = renderPago;
 

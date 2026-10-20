@@ -4,7 +4,9 @@ const PRECIOS_BASE = {
 };
 
 const FACTOR_DESCUENTO = 0.5;
+const EDAD_GRATUIDAD_MAXIMA = 3;
 const EDAD_LIMITE_DESCUENTO_MENOR = 15;
+const EDAD_MINIMA_DESCUENTO_MAYOR = 60;
 
 const PASES_PERMITIDOS = Object.keys(PRECIOS_BASE);
 
@@ -15,7 +17,11 @@ export const obtenerPrecioBasePase = (tipoPase) => PRECIOS_BASE[tipoPase];
 export const calcularPrecioVisitante = ({ edad, tipoPase }) => {
   const precioBase = obtenerPrecioBasePase(tipoPase);
 
-  if (edad <= EDAD_LIMITE_DESCUENTO_MENOR) {
+  if (edad <= EDAD_GRATUIDAD_MAXIMA) {
+    return 0;
+  }
+
+  if (edad <= EDAD_LIMITE_DESCUENTO_MENOR || edad >= EDAD_MINIMA_DESCUENTO_MAYOR) {
     return precioBase * FACTOR_DESCUENTO;
   }
 

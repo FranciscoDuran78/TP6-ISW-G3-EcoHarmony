@@ -1,4 +1,7 @@
-import { validarLimiteAcumuladoPorFecha } from '../src/validarFecha.js';
+import {
+  validarCupoDiarioGlobal,
+  validarLimiteAcumuladoPorFecha,
+} from '../src/validarFecha.js';
 
 describe('Validación de límite acumulado por fecha', () => {
   // [TC-76] - Completado
@@ -48,6 +51,23 @@ describe('Validación de límite acumulado por fecha', () => {
       fechaPreviaDistinta,
     );
 
+    expect(resultado).toBe(true);
+  });
+});
+
+describe('Validación de cupo diario del parque', () => {
+  // [TC-80] - ETAPA RED
+  test('TC-80: debería aceptar una compra válida cuando no hay cupo diario configurado', () => {
+    const visitantesTotalesParqueFecha = 500;
+    const cupoDiarioConfigurado = null;
+    const compraValida = validarLimiteAcumuladoPorFecha(0, 4);
+
+    const resultado = validarCupoDiarioGlobal(
+      visitantesTotalesParqueFecha,
+      cupoDiarioConfigurado,
+    );
+
+    expect(compraValida).toBe(true);
     expect(resultado).toBe(true);
   });
 });

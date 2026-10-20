@@ -100,17 +100,7 @@ function registrarResultado(compra, resultado, estadoCompra) {
 }
 
 function reintentarPago(compra) {
-  const estadoReintentable = [
-    ESTADOS.RECHAZADA,
-    ESTADOS.CANCELADA,
-  ].includes(compra.estado);
-
-  if (
-    compra.formaPago !== "tarjeta" ||
-    !compra.compraValida ||
-    compra.pagada ||
-    !estadoReintentable
-  ) {
+  if (!puedeReintentar(compra)) {
     throw new Error("No se puede reintentar esta compra");
   }
 
@@ -122,7 +112,19 @@ function reintentarPago(compra) {
 
   return compra;
 }
+function puedeReintentar(compra) {
+  const estadoReintentable = [
+    ESTADOS.RECHAZADA,
+    ESTADOS.CANCELADA,
+  ].includes(compra.estado);
 
+  return (
+    compra.formaPago === "tarjeta" &&
+    compra.compraValida &&
+    !compra.pagada &&
+    estadoReintentable
+  );
+}
 exports.reintentarPago = reintentarPago;
 
 exports.resolverTransaccion = resolverTransaccion;

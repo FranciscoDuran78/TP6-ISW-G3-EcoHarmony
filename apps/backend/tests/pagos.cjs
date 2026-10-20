@@ -5,6 +5,10 @@ const ESTADOS = Object.freeze({
   RECHAZADA: "rechazada",
   CANCELADA: "cancelada",
 });
+const ESTADO_POR_RESULTADO = Object.freeze({
+  aprobada: ESTADOS.PAGADA,
+  rechazada: ESTADOS.RECHAZADA,
+});
 
 function crearCompra({ formaPago, compraValida = true }) {
   return {
@@ -69,23 +73,15 @@ function crearIntento(numero) {
 }
 
 function resolverTransaccion(compra, resultado) {
-  if (resultado === "aprobada") {
-    return registrarResultado(
-      compra,
-      resultado,
-      ESTADOS.PAGADA
-    );
+  if (!Object.hasOwn(ESTADO_POR_RESULTADO, resultado)) {
+    throw new Error("Resultado no soportado");
   }
 
-  if (resultado === "rechazada") {
-    return registrarResultado(
-      compra,
-      resultado,
-      ESTADOS.RECHAZADA
-    );
-  }
-
-  throw new Error("Resultado no soportado");
+  return registrarResultado(
+    compra,
+    resultado,
+    ESTADO_POR_RESULTADO[resultado]
+  );
 }
 
 function registrarResultado(compra, resultado, estadoCompra) {

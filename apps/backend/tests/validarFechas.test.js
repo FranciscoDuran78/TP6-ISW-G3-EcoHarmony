@@ -50,5 +50,17 @@ describe('Validación de Fecha de Visita y Calendario', () => {
     }).toThrow('El parque se encuentra cerrado los días lunes');
   });
 
+  test('TC-26: rechazar la compra si la fecha de visita corresponde a un día feriado', () => {
+    const fechaFeriado = new Date();
+    fechaFeriado.setDate(fechaFeriado.getDate() + 10);
+    const fechaStr = fechaFeriado.toISOString().split('T')[0];
+
+    const feriados = [fechaStr];
+
+    expect(() => {
+      validarFechaVisita(fechaStr, null, true, feriados);
+    }).toThrow('El parque se encuentra cerrado por día feriado');
+  });
+
 });
 

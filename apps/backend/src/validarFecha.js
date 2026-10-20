@@ -10,7 +10,7 @@ const MENSAJES_ERROR_FECHA = {
 
 const LUNES = 1;
 const LIMITE_MINUTOS_17_30 = 17 * 60 + 30;
-const FERIADOS_OFICIALES = ['12-25']
+const FERIADOS_OFICIALES = ['12-25', '01-01'];
 
 const convertirHoraAMinutos = (horaStr) => {
   const [horas, minutos] = horaStr.split(':').map(Number);

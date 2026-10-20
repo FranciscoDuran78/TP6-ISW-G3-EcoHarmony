@@ -99,6 +99,32 @@ function registrarResultado(compra, resultado, estadoCompra) {
   return compra;
 }
 
+function reintentarPago(compra) {
+  const estadoReintentable = [
+    ESTADOS.RECHAZADA,
+    ESTADOS.CANCELADA,
+  ].includes(compra.estado);
+
+  if (
+    compra.formaPago !== "tarjeta" ||
+    !compra.compraValida ||
+    compra.pagada ||
+    !estadoReintentable
+  ) {
+    throw new Error("No se puede reintentar esta compra");
+  }
+
+  const numero = compra.intentos.length + 1;
+
+  compra.intentos.push(crearIntento(numero));
+  compra.estado = ESTADOS.PENDIENTE;
+  compra.pagada = false;
+
+  return compra;
+}
+
+exports.reintentarPago = reintentarPago;
+
 exports.resolverTransaccion = resolverTransaccion;
 
 exports.renderPago = renderPago;

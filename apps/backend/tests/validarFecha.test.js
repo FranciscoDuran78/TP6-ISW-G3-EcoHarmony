@@ -33,4 +33,21 @@ describe('Validación de límite acumulado por fecha', () => {
       validarLimiteAcumuladoPorFecha(comprasPreviasMismaFecha, compraActual);
     }).toThrow('Supera el límite de 10 entradas permitidas por fecha');
   });
+
+  // [TC-79] - ETAPA RED
+  test('TC-79: debería permitir 10 entradas en una fecha nueva aunque haya 10 en otra fecha', () => {
+    const entradasPrevias = 10;
+    const cantidadActual = 10;
+    const fechaNueva = '2026-11-20';
+    const fechaPreviaDistinta = '2026-11-10';
+
+    const resultado = validarLimiteAcumuladoPorFecha(
+      entradasPrevias,
+      cantidadActual,
+      fechaNueva,
+      fechaPreviaDistinta,
+    );
+
+    expect(resultado).toBe(true);
+  });
 });

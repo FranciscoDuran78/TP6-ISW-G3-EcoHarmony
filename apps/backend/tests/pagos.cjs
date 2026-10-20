@@ -12,6 +12,10 @@ function crearCompra({ formaPago, compraValida = true }) {
     compraValida,
     estado: ESTADOS.PENDIENTE,
     pagada: false,
+    intentos:
+      formaPago === "tarjeta" && compraValida
+        ? [{ numero: 1, estado: "pendiente" }]
+        : [],
   };
 }
 
@@ -28,5 +32,30 @@ function confirmarPagoBoleteria(compra, validacion) {
   return compra;
 }
 
+function renderPago(compra) {
+  if (compra.formaPago !== "tarjeta" || !compra.compraValida) {
+    return "";
+  }
+
+  return `
+    <section aria-label="Mercado Pago simulado">
+      <h2>Mercado Pago — Simulación</h2>
+      <p>Intento ${compra.intentos.length}</p>
+
+      <form>
+        <label>
+          Número de tarjeta
+          <input name="tarjeta" autocomplete="off">
+        </label>
+
+        <button type="submit">Confirmar pago</button>
+      </form>
+    </section>
+  `;
+}
+
+exports.renderPago = renderPago;
+
 exports.crearCompra = crearCompra;
 exports.confirmarPagoBoleteria = confirmarPagoBoleteria;
+

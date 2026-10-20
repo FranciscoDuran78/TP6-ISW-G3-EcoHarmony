@@ -28,22 +28,23 @@ const crearPersistenciaCompras = (database) => {
     FROM compras
     WHERE usuario_id = ? AND fecha_visita = ? AND estado != 'RECHAZADA'
   `);
+  const guardar = database.transaction((compra) => {
+    const { lastInsertRowid: id } = insertarCompra.run({
+      usuarioId: compra.usuario.id,
+      fechaVisita: compra.fechaVisita,
+      cantidad: compra.cantidad,
+      total: compra.total,
+      estado: compra.estado,
+      compraJson: JSON.stringify(compra),
+    });
+    const compraGuardada = { ...compra, id: Number(id) };
+    database.prepare('UPDATE compras SET compra_json = ? WHERE id = ?')
+      .run(JSON.stringify(compraGuardada), id);
+    return compraGuardada;
+  });
 
   return {
-    guardar(compra) {
-      const { lastInsertRowid: id } = insertarCompra.run({
-        usuarioId: compra.usuario.id,
-        fechaVisita: compra.fechaVisita,
-        cantidad: compra.cantidad,
-        total: compra.total,
-        estado: compra.estado,
-        compraJson: JSON.stringify(compra),
-      });
-      const compraGuardada = { ...compra, id: Number(id) };
-      database.prepare('UPDATE compras SET compra_json = ? WHERE id = ?')
-        .run(JSON.stringify(compraGuardada), id);
-      return compraGuardada;
-    },
+    guardar,
     obtenerPorId(id) {
       const fila = obtenerCompra.get(id);
       return fila ? JSON.parse(fila.compra_json) : null;

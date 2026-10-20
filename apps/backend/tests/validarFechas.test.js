@@ -10,13 +10,14 @@ describe('Validación de Fecha de Visita y Calendario', () => {
     expect(resultado).toBe(true);
   });
 
-  test('TC-22: permitir seleccionar una fecha futura dentro del próximo mes', () => {
-    const fechaFutura = new Date();
-    fechaFutura.setDate(fechaFutura.getDate() + 15);
-    const fechaStr = fechaFutura.toISOString().split('T')[0];
+  test('TC-22 (Rechazo): rechazar una fecha que supera el horizonte de 1 mes', () => {
+    const fechaLejana = new Date();
+    fechaLejana.setDate(fechaLejana.getDate() + 35); 
+    const fechaStr = fechaLejana.toISOString().split('T')[0];
 
-    const resultado = validarFechaVisita(fechaStr);
-    expect(resultado).toBe(true);
+    expect(() => {
+      validarFechaVisita(fechaStr);
+    }).toThrow('La fecha supera el horizonte máximo de compra permitido (1 mes)');
   });
 
 });

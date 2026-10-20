@@ -63,6 +63,17 @@ describe('Visitantes y entradas', () => {
     .toThrow('La cantidad de entradas no coincide con los visitantes ingresados');
 });
 
+  test('TC-74: rechaza más visitantes que entradas', () => {
+    const visitantes = [
+      { edad: 25, tipoPase: 'Regular' },
+      { edad: 35, tipoPase: 'VIP' },
+    ];
+
+    expect(() => validarEstructuraVisitantes(1, visitantes))
+      .toThrow('La cantidad de entradas no coincide con los visitantes ingresados');
+  });
+
+
 describe('Fecha única por compra', () => {
   test('TC-71: acepta varias entradas asociadas a la misma fecha válida', () => {
     const entradas = [

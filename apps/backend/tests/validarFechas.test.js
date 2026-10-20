@@ -29,6 +29,16 @@ describe('Validación de Fecha de Visita y Calendario', () => {
       validarFechaVisita(fechaStr);
     }).toThrow('La fecha de visita no puede ser anterior a la actual');
   });
-  
+
+  test('TC-24: rechazar la compra si la fecha de visita es nula o vacía', () => {
+    expect(() => {
+      validarFechaVisita(null);
+    }).toThrow('La fecha de visita es obligatoria');
+
+    expect(() => {
+      validarFechaVisita('');
+    }).toThrow('La fecha de visita es obligatoria');
+  });
+
 });
 

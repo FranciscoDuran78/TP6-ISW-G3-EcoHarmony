@@ -6,20 +6,12 @@ const MENSAJES_ERROR_FECHA = {
   PARQUE_CERRADO_LUNES: 'El parque se encuentra cerrado los días lunes',
 };
 
+const LUNES = 1;
+const LIMITE_MINUTOS_17_30 = 17 * 60 + 30;
+
 const convertirHoraAMinutos = (horaStr) => {
   const [horas, minutos] = horaStr.split(':').map(Number);
   return horas * 60 + minutos;
-};
-
-const validarHoraCompraMismoDia = (horaCompraActual) => {
-  if (!horaCompraActual) return;
-  
-  const minutosTotales = convertirHoraAMinutos(horaCompraActual);
-  const LIMITE_MINUTOS = 17 * 60 + 30; // 17:30
-
-  if (minutosTotales > LIMITE_MINUTOS) {
-    throw new Error(MENSAJES_ERROR_FECHA.HORA_LIMITE_SUPERADA);
-  }
 };
 
 const parsearFechaLocal = (fechaStr) => {
@@ -33,18 +25,25 @@ const validarPresenciaFecha = (fechaVisita) => {
   }
 };
 
+const validarHoraCompraMismoDia = (horaCompraActual) => {
+  if (!horaCompraActual) return;
+  
+  const minutosTotales = convertirHoraAMinutos(horaCompraActual);
+
+  if (minutosTotales > LIMITE_MINUTOS_17_30) {
+    throw new Error(MENSAJES_ERROR_FECHA.HORA_LIMITE_SUPERADA);
+  }
+};
+
 const validarDiaLaborable = (fechaObj) => {
-  if (fechaObj.getDay() === 1) {
+  if (fechaObj.getDay() === LUNES) {
     throw new Error(MENSAJES_ERROR_FECHA.PARQUE_CERRADO_LUNES);
   }
 };
 
-const validarRangoFechaVisita = (fechaVisita) => {
+const validarRangoFechaVisita = (fechaObj) => {
   const ahora = new Date();
   const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
-  const fechaObj = parsearFechaLocal(fechaVisita);
-
-  validarDiaLaborable(fechaObj);
 
   if (fechaObj < hoy) {
     throw new Error(MENSAJES_ERROR_FECHA.FECHA_PASADA);
@@ -64,7 +63,11 @@ const validarFechaVisita = (fechaVisita, horaCompraActual = null, parqueAbierto 
   }
 
   validarPresenciaFecha(fechaVisita);
-  validarRangoFechaVisita(fechaVisita);
+  
+  const fechaObj = parsearFechaLocal(fechaVisita);
+  
+  validarDiaLaborable(fechaObj);
+  validarRangoFechaVisita(fechaObj);
   validarHoraCompraMismoDia(horaCompraActual);
 
   return true;

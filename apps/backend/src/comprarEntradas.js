@@ -29,13 +29,29 @@ export const calcularPrecioVisitante = ({ edad, tipoPase }) => {
 };
 
 export const calcularTotalCompra = (visitantes) => {
+  const subtotal = visitantes
+    .filter((visitante) => (
+      visitante.edad > EDAD_LIMITE_DESCUENTO_MENOR
+      && visitante.edad < EDAD_MINIMA_DESCUENTO_MAYOR
+    ))
+    .reduce((acumulado, visitante) => acumulado + obtenerPrecioBasePase(visitante.tipoPase), 0);
+
   const total = visitantes.reduce((acumulado, visitante) => (
     acumulado + calcularPrecioVisitante(visitante)
   ), 0);
 
+  const descuentos = visitantes
+    .filter((visitante) => (
+      (visitante.edad > EDAD_GRATUIDAD_MAXIMA && visitante.edad <= EDAD_LIMITE_DESCUENTO_MENOR)
+      || visitante.edad >= EDAD_MINIMA_DESCUENTO_MAYOR
+    ))
+    .reduce((acumulado, visitante) => (
+      acumulado + (obtenerPrecioBasePase(visitante.tipoPase) * FACTOR_DESCUENTO)
+    ), 0);
+
   return {
-    subtotal: 20000,
-    descuentos: 5000,
+    subtotal,
+    descuentos,
     total,
   };
 };

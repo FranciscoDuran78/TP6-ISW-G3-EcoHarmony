@@ -14,7 +14,7 @@ describe('Validación de límite acumulado por fecha', () => {
     expect(resultado).toBe(true);
   });
 
-  // [TC-77] - ETAPA RED
+  // [TC-77] - Completado
   test('TC-77: debería rechazar una compra que eleva el total a 11 entradas para esa fecha', () => {
     const comprasPreviasMismaFecha = 6;
     const compraActual = 5;

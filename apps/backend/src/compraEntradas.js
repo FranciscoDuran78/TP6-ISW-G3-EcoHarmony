@@ -84,18 +84,20 @@ const generarResumenCompra = (datos) => ({
 });
 
 const procesarCompra = (datosCompra, servicioMail = null) => {
-  if (!datosCompra.formaPago) {
+  const { formaPago, fecha, cantidad, pases } = datosCompra;
+
+  if (!formaPago) {
     throw new Error(MENSAJES_ERROR.FORMA_PAGO_REQUERIDA);
   }
 
-  if (esLunes(datosCompra.fecha)) {
+  if (esLunes(fecha)) {
     throw new Error(MENSAJES_ERROR.FECHA_LUNES_BLOQUEADA);
   }
 
-  validarCantidadEntradas(datosCompra.cantidad);
-  validarEstructuraVisitantes(datosCompra.cantidad, datosCompra.pases);
+  validarCantidadEntradas(cantidad);
+  validarEstructuraVisitantes(cantidad, pases);
 
-  const estadoPago = datosCompra.formaPago === 'tarjeta' ? 'aprobado' : 'pendiente_validacion';
+  const estadoPago = formaPago === 'tarjeta' ? 'aprobado' : 'pendiente_validacion';
   const resumen = generarResumenCompra(datosCompra);
   let correo = null;
   let errorCorreo = null;
@@ -112,8 +114,8 @@ const procesarCompra = (datosCompra, servicioMail = null) => {
   return {
     compraConfirmada: true,
     estadoPago,
-    cantidad: datosCompra.cantidad,
-    fecha: datosCompra.fecha,
+    cantidad,
+    fecha,
     resumen,
     correo,
     errorCorreo,

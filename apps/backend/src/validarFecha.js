@@ -4,6 +4,7 @@ const MENSAJES_ERROR_FECHA = {
   FECHA_PASADA: 'La fecha de visita no puede ser anterior a la actual',
   FECHA_OBLIGATORIA: 'La fecha de visita es obligatoria',
   PARQUE_CERRADO_LUNES: 'El parque se encuentra cerrado los días lunes',
+  PARQUE_CERRADO_FERIADO: 'El parque se encuentra cerrado por día feriado',
 };
 
 const LUNES = 1;
@@ -41,6 +42,12 @@ const validarDiaLaborable = (fechaObj) => {
   }
 };
 
+const validarFeriado = (fechaVisita, feriados = []) => {
+  if (feriados.includes(fechaVisita)) {
+    throw new Error(MENSAJES_ERROR_FECHA.PARQUE_CERRADO_FERIADO);
+  }
+};
+
 const validarRangoFechaVisita = (fechaObj) => {
   const ahora = new Date();
   const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
@@ -57,12 +64,13 @@ const validarRangoFechaVisita = (fechaObj) => {
   }
 };
 
-const validarFechaVisita = (fechaVisita, horaCompraActual = null, parqueAbierto = true) => {
+const validarFechaVisita = (fechaVisita, horaCompraActual = null, parqueAbierto = true, feriados = []) => {
   if (!parqueAbierto) {
     return false;
   }
 
   validarPresenciaFecha(fechaVisita);
+  validarFeriado(fechaVisita, feriados);
   
   const fechaObj = parsearFechaLocal(fechaVisita);
   

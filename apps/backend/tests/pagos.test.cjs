@@ -68,3 +68,21 @@ test("TC-44: muestra el rechazo y no marca la compra como pagada", () => {
   assert.doesNotMatch(html, /Transacción aprobada/);
   assert.doesNotMatch(html, /<form/);
 });
+
+test("TC-45: registra la cancelación y mantiene la compra sin pagar", () => {
+  const compra = pagos.crearCompra({
+    formaPago: "tarjeta",
+  });
+
+  pagos.resolverTransaccion(compra, "cancelada");
+
+  assert.equal(compra.estado, "cancelada");
+  assert.equal(compra.pagada, false);
+  assert.equal(compra.intentos[0].estado, "cancelada");
+
+  const html = pagos.renderPago(compra);
+
+  assert.match(html, /Transacción cancelada/);
+  assert.doesNotMatch(html, /Transacción aprobada/);
+  assert.doesNotMatch(html, /<form/);
+});

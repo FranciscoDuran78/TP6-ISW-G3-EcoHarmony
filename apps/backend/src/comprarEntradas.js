@@ -27,3 +27,15 @@ export const calcularPrecioVisitante = ({ edad, tipoPase }) => {
 
   return precioBase;
 };
+
+export const calcularTotalCompra = (visitantes) => {
+  const total = visitantes.reduce((acumulado, visitante) => (
+    acumulado + calcularPrecioVisitante(visitante)
+  ), 0);
+
+  return {
+    subtotal: 20000,
+    descuentos: 5000,
+    total,
+  };
+};

@@ -9,5 +9,15 @@ describe('Validación de Fecha de Visita y Calendario', () => {
     const resultado = validarFechaVisita(hoyStr, horaCompra, parqueAbierto);
     expect(resultado).toBe(true);
   });
+
+  test('TC-22: permitir seleccionar una fecha futura dentro del próximo mes', () => {
+    const fechaFutura = new Date();
+    fechaFutura.setDate(fechaFutura.getDate() + 15);
+    const fechaStr = fechaFutura.toISOString().split('T')[0];
+
+    const resultado = validarFechaVisita(fechaStr);
+    expect(resultado).toBe(true);
+  });
+
 });
 

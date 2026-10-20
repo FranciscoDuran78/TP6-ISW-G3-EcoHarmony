@@ -56,7 +56,7 @@ describe('Validación de límite acumulado por fecha', () => {
 });
 
 describe('Validación de cupo diario del parque', () => {
-  // [TC-80] - ETAPA RED
+  // [TC-80] - Completado
   test('TC-80: debería aceptar una compra válida cuando no hay cupo diario configurado', () => {
     const visitantesTotalesParqueFecha = 500;
     const cupoDiarioConfigurado = null;

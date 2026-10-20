@@ -21,8 +21,20 @@ const validarLimiteAcumuladoPorFecha = (
   return true;
 };
 
+const validarCupoDiarioGlobal = (
+  visitantesTotalesParqueFecha,
+  cupoDiarioConfigurado = null,
+) => {
+  if (cupoDiarioConfigurado === null || cupoDiarioConfigurado === undefined) {
+    return true;
+  }
+
+  return typeof visitantesTotalesParqueFecha === 'number';
+};
+
 export {
   MAXIMO_ENTRADAS_POR_FECHA,
   MENSAJES_ERROR,
+  validarCupoDiarioGlobal,
   validarLimiteAcumuladoPorFecha,
 };

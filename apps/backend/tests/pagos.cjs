@@ -70,11 +70,19 @@ function resolverTransaccion(compra, resultado) {
     throw new Error("Resultado no soportado");
   }
 
+  return registrarResultado(
+    compra,
+    resultado,
+    ESTADOS.PAGADA
+  );
+}
+
+function registrarResultado(compra, resultado, estadoCompra) {
   const intento = compra.intentos.at(-1);
 
   intento.estado = resultado;
-  compra.estado = ESTADOS.PAGADA;
-  compra.pagada = true;
+  compra.estado = estadoCompra;
+  compra.pagada = estadoCompra === ESTADOS.PAGADA;
 
   return compra;
 }

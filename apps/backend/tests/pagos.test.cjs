@@ -50,3 +50,21 @@ test("TC-43: registra y muestra una transacción aprobada", () => {
   assert.match(html, /Transacción aprobada/);
   assert.doesNotMatch(html, /<form/);
 });
+
+test("TC-44: muestra el rechazo y no marca la compra como pagada", () => {
+  const compra = pagos.crearCompra({
+    formaPago: "tarjeta",
+  });
+
+  pagos.resolverTransaccion(compra, "rechazada");
+
+  assert.equal(compra.estado, "rechazada");
+  assert.equal(compra.pagada, false);
+  assert.equal(compra.intentos[0].estado, "rechazada");
+
+  const html = pagos.renderPago(compra);
+
+  assert.match(html, /Transacción rechazada/);
+  assert.doesNotMatch(html, /Transacción aprobada/);
+  assert.doesNotMatch(html, /<form/);
+});

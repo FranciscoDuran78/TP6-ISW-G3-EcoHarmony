@@ -3,6 +3,9 @@ const PRECIOS_BASE = {
   VIP: 20000,
 };
 
+const FACTOR_DESCUENTO = 0.5;
+const EDAD_LIMITE_DESCUENTO_MENOR = 15;
+
 const PASES_PERMITIDOS = Object.keys(PRECIOS_BASE);
 
 export const esTipoPaseValido = (tipoPase) => PASES_PERMITIDOS.includes(tipoPase);
@@ -10,10 +13,10 @@ export const esTipoPaseValido = (tipoPase) => PASES_PERMITIDOS.includes(tipoPase
 export const obtenerPrecioBasePase = (tipoPase) => PRECIOS_BASE[tipoPase];
 
 export const calcularPrecioVisitante = ({ edad, tipoPase }) => {
-  const precioBase = PRECIOS_BASE[tipoPase];
+  const precioBase = obtenerPrecioBasePase(tipoPase);
 
-  if (edad <= 15) {
-    return precioBase * 0.5;
+  if (edad <= EDAD_LIMITE_DESCUENTO_MENOR) {
+    return precioBase * FACTOR_DESCUENTO;
   }
 
   return precioBase;

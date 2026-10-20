@@ -40,6 +40,9 @@ function renderPago(compra) {
   if (compra.estado === ESTADOS.PAGADA) {
     return '<p role="status">Transacción aprobada</p>';
   }
+  if (compra.estado === ESTADOS.RECHAZADA) {
+  return '<p role="status">Transacción rechazada</p>';
+}
 
   return `
     <section aria-label="Mercado Pago simulado">
@@ -66,15 +69,23 @@ function crearIntento(numero) {
 }
 
 function resolverTransaccion(compra, resultado) {
-  if (resultado !== "aprobada") {
-    throw new Error("Resultado no soportado");
+  if (resultado === "aprobada") {
+    return registrarResultado(
+      compra,
+      resultado,
+      ESTADOS.PAGADA
+    );
   }
 
-  return registrarResultado(
-    compra,
-    resultado,
-    ESTADOS.PAGADA
-  );
+  if (resultado === "rechazada") {
+    return registrarResultado(
+      compra,
+      resultado,
+      ESTADOS.RECHAZADA
+    );
+  }
+
+  throw new Error("Resultado no soportado");
 }
 
 function registrarResultado(compra, resultado, estadoCompra) {

@@ -78,5 +78,15 @@ describe('Validación de Fecha de Visita y Calendario', () => {
       validarFechaVisita(fechaNavidad);
     }).toThrow('El parque se encuentra cerrado por día feriado');
   });
+
+  test('TC-29: deshabilitar el 1 de enero por feriado de año nuevo', () => {
+    const anioActual = new Date().getFullYear();
+    const fechaAnioNuevo = `${anioActual + 1}-01-01`;
+
+    expect(() => {
+      validarFechaVisita(fechaAnioNuevo);
+    }).toThrow('El parque se encuentra cerrado por día feriado');
+  });
+
 });
 

@@ -23,4 +23,14 @@ describe('Validación de límite acumulado por fecha', () => {
       validarLimiteAcumuladoPorFecha(comprasPreviasMismaFecha, compraActual);
     }).toThrow('Supera el límite de 10 entradas permitidas por fecha');
   });
+
+  // [TC-78] - ETAPA RED
+  test('TC-78: debería rechazar una entrada adicional cuando ya hay 10 compradas para esa fecha', () => {
+    const comprasPreviasMismaFecha = 10;
+    const compraActual = 1;
+
+    expect(() => {
+      validarLimiteAcumuladoPorFecha(comprasPreviasMismaFecha, compraActual);
+    }).toThrow('Supera el límite de 10 entradas permitidas por fecha');
+  });
 });

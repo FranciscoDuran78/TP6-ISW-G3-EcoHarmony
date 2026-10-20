@@ -88,5 +88,19 @@ describe('Validación de Fecha de Visita y Calendario', () => {
     }).toThrow('El parque se encuentra cerrado por día feriado');
   });
 
+  test('TC-30: rechazar una fecha de visita cerrada aunque sea futura (lunes futuro)', () => {
+    const fechaLunesFuturo = new Date();
+    fechaLunesFuturo.setDate(fechaLunesFuturo.getDate() + 14); 
+    const diaSemana = fechaLunesFuturo.getDay();
+    const diasHastaLunes = (1 + 7 - diaSemana) % 7 || 7;
+    fechaLunesFuturo.setDate(fechaLunesFuturo.getDate() + (diasHastaLunes === 7 ? 0 : diasHastaLunes));
+    
+    const fechaStr = fechaLunesFuturo.toISOString().split('T')[0];
+
+    expect(() => {
+      validarFechaVisita(fechaStr);
+    }).toThrow('El parque se encuentra cerrado los días lunes');
+  });
+
 });
 

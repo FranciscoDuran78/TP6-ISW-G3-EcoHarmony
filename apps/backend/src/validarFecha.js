@@ -2,6 +2,7 @@ const MENSAJES_ERROR_FECHA = {
   HORA_LIMITE_SUPERADA: 'No se pueden realizar compras para el mismo día después de las 17:30',
   HORIZONTE_SUPERADO: 'La fecha supera el horizonte máximo de compra permitido (1 mes)',
   FECHA_PASADA: 'La fecha de visita no puede ser anterior a la actual',
+  FECHA_OBLIGATORIA: 'La fecha de visita es obligatoria',
 };
 
 const convertirHoraAMinutos = (horaStr) => {
@@ -13,7 +14,7 @@ const validarHoraCompraMismoDia = (horaCompraActual) => {
   if (!horaCompraActual) return;
   
   const minutosTotales = convertirHoraAMinutos(horaCompraActual);
-  const LIMITE_MINUTOS = 17 * 60 + 30; // 17:30
+  const LIMITE_MINUTOS = 17 * 60 + 30;
 
   if (minutosTotales > LIMITE_MINUTOS) {
     throw new Error(MENSAJES_ERROR_FECHA.HORA_LIMITE_SUPERADA);
@@ -26,6 +27,10 @@ const parsearFechaLocal = (fechaStr) => {
 };
 
 const validarRangoFechaVisita = (fechaVisita) => {
+  if (!fechaVisita || typeof fechaVisita !== 'string' || fechaVisita.trim() === '') {
+    throw new Error(MENSAJES_ERROR_FECHA.FECHA_OBLIGATORIA);
+  }
+
   const ahora = new Date();
   const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
   const fechaObj = parsearFechaLocal(fechaVisita);

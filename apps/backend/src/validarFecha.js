@@ -3,6 +3,7 @@ const MENSAJES_ERROR_FECHA = {
   HORIZONTE_SUPERADO: 'La fecha supera el horizonte máximo de compra permitido (1 mes)',
   FECHA_PASADA: 'La fecha de visita no puede ser anterior a la actual',
   FECHA_OBLIGATORIA: 'La fecha de visita es obligatoria',
+  PARQUE_CERRADO_LUNES: 'El parque se encuentra cerrado los días lunes',
 };
 
 const convertirHoraAMinutos = (horaStr) => {
@@ -14,7 +15,7 @@ const validarHoraCompraMismoDia = (horaCompraActual) => {
   if (!horaCompraActual) return;
   
   const minutosTotales = convertirHoraAMinutos(horaCompraActual);
-  const LIMITE_MINUTOS = 17 * 60 + 30;
+  const LIMITE_MINUTOS = 17 * 60 + 30; // 17:30
 
   if (minutosTotales > LIMITE_MINUTOS) {
     throw new Error(MENSAJES_ERROR_FECHA.HORA_LIMITE_SUPERADA);
@@ -32,10 +33,18 @@ const validarPresenciaFecha = (fechaVisita) => {
   }
 };
 
+const validarDiaLaborable = (fechaObj) => {
+  if (fechaObj.getDay() === 1) {
+    throw new Error(MENSAJES_ERROR_FECHA.PARQUE_CERRADO_LUNES);
+  }
+};
+
 const validarRangoFechaVisita = (fechaVisita) => {
   const ahora = new Date();
   const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
   const fechaObj = parsearFechaLocal(fechaVisita);
+
+  validarDiaLaborable(fechaObj);
 
   if (fechaObj < hoy) {
     throw new Error(MENSAJES_ERROR_FECHA.FECHA_PASADA);

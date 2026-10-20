@@ -26,11 +26,13 @@ const parsearFechaLocal = (fechaStr) => {
   return new Date(anio, mes - 1, dia);
 };
 
-const validarRangoFechaVisita = (fechaVisita) => {
+const validarPresenciaFecha = (fechaVisita) => {
   if (!fechaVisita || typeof fechaVisita !== 'string' || fechaVisita.trim() === '') {
     throw new Error(MENSAJES_ERROR_FECHA.FECHA_OBLIGATORIA);
   }
+};
 
+const validarRangoFechaVisita = (fechaVisita) => {
   const ahora = new Date();
   const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
   const fechaObj = parsearFechaLocal(fechaVisita);
@@ -52,6 +54,7 @@ const validarFechaVisita = (fechaVisita, horaCompraActual = null, parqueAbierto 
     return false;
   }
 
+  validarPresenciaFecha(fechaVisita);
   validarRangoFechaVisita(fechaVisita);
   validarHoraCompraMismoDia(horaCompraActual);
 

@@ -1,6 +1,7 @@
 import {
   esTipoPaseValido,
   obtenerPrecioBasePase,
+  calcularPrecioVisitante,
 } from '../src/comprarEntradas.js';
 
 describe('Casos TC-63 al TC-66: Precios y tipos de pase', () => {
@@ -19,6 +20,19 @@ describe('Casos TC-63 al TC-66: Precios y tipos de pase', () => {
       expect(precioBaseRegular).toBe(10000);
       expect(precioBaseVip).toBe(20000);
       expect(precioBaseVip).toBeGreaterThan(precioBaseRegular);
+    });
+  });
+
+  describe('TC-64: Permitir pase regular a cualquier edad aplicando descuento por edad', () => {
+    it('debe aplicar 50% de descuento en pase regular para un menor de 10 anos', () => {
+      const visitante = {
+        edad: 10,
+        tipoPase: 'regular',
+      };
+
+      const precio = calcularPrecioVisitante(visitante);
+
+      expect(precio).toBe(5000);
     });
   });
 });

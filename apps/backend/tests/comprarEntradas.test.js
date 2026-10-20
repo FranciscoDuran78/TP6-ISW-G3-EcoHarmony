@@ -35,4 +35,17 @@ describe('Casos TC-63 al TC-66: Precios y tipos de pase', () => {
       expect(precio).toBe(5000);
     });
   });
+
+  describe('TC-65: Permitir pase VIP a cualquier edad aplicando descuento por edad', () => {
+    it('debe aplicar 50% de descuento en pase VIP para un visitante de 10 anos', () => {
+      const visitante = {
+        edad: 10,
+        tipoPase: 'VIP',
+      };
+
+      const precio = calcularPrecioVisitante(visitante);
+
+      expect(precio).toBe(10000);
+    });
+  });
 });

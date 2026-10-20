@@ -45,7 +45,7 @@ describe('Visitantes y entradas', () => {
   });
 });
 
-test('TC-72: acepta visitantes con edad y tipo de pase informados', () => {
+  test('TC-72: acepta visitantes con edad y tipo de pase informados', () => {
   const visitantes = [
     { edad: 25, tipoPase: 'Regular' },
     { edad: 35, tipoPase: 'VIP' },
@@ -53,8 +53,15 @@ test('TC-72: acepta visitantes con edad y tipo de pase informados', () => {
 
   expect(validarEstructuraVisitantes(2, visitantes)).toBe(true);
 });
+  test('TC-73: rechaza menos visitantes que entradas', () => {
+  const visitantes = [
+    { edad: 25, tipoPase: 'Regular' },
+    { edad: 35, tipoPase: 'VIP' },
+  ];
 
-
+  expect(() => validarEstructuraVisitantes(3, visitantes))
+    .toThrow('La cantidad de entradas no coincide con los visitantes ingresados');
+});
 
 describe('Fecha única por compra', () => {
   test('TC-71: acepta varias entradas asociadas a la misma fecha válida', () => {

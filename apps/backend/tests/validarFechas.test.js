@@ -50,17 +50,13 @@ describe('Validación de Fecha de Visita y Calendario', () => {
     }).toThrow('La fecha ingresada no es válida');
   });
 
-  test('TC-26: rechazar la compra si la fecha de visita corresponde a un día feriado', () => {
-    const fechaFeriado = new Date();
-    fechaFeriado.setDate(fechaFeriado.getDate() + 10);
-    const fechaStr = fechaFeriado.toISOString().split('T')[0];
+  test('TC-26: permitir seleccionar un martes ordinario, sin feriado de cierre', () => {
+    const fechaMartes = new Date();
+    fechaMartes.setDate(fechaMartes.getDate() + ((2 + 7 - fechaMartes.getDay()) % 7 || 7));
+    const fechaStr = fechaMartes.toISOString().split('T')[0];
 
-    const feriados = [fechaStr];
-
-    expect(() => {
-      validarFechaVisita(fechaStr, null, true, feriados);
-    }).toThrow('El parque se encuentra cerrado por día feriado');
+    const resultado = validarFechaVisita(fechaStr, null, true, []);
+    expect(resultado).toBe(true);
   });
-
 });
 

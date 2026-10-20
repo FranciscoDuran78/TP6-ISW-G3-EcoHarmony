@@ -20,5 +20,15 @@ describe('Validación de Fecha de Visita y Calendario', () => {
     }).toThrow('La fecha supera el horizonte máximo de compra permitido (1 mes)');
   });
 
+  test('TC-23: rechazar la compra si la fecha de visita es anterior al día actual', () => {
+    const fechaPasada = new Date();
+    fechaPasada.setDate(fechaPasada.getDate() - 2); // 2 días en el pasado
+    const fechaStr = fechaPasada.toISOString().split('T')[0];
+
+    expect(() => {
+      validarFechaVisita(fechaStr);
+    }).toThrow('La fecha de visita no puede ser anterior a la actual');
+  });
+  
 });
 

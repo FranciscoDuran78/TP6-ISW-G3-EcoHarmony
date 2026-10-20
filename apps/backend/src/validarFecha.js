@@ -13,26 +13,27 @@ const validarHoraCompraMismoDia = (horaCompraActual) => {
   if (!horaCompraActual) return;
   
   const minutosTotales = convertirHoraAMinutos(horaCompraActual);
-  const LIMITE_MINUTOS = 17 * 60 + 30; 
+  const LIMITE_MINUTOS = 17 * 60 + 30; // 17:30
 
   if (minutosTotales > LIMITE_MINUTOS) {
     throw new Error(MENSAJES_ERROR_FECHA.HORA_LIMITE_SUPERADA);
   }
 };
 
-const validarHorizonteCompra = (fechaVisita) => {
+const parsearFechaLocal = (fechaStr) => {
+  const [anio, mes, dia] = fechaStr.split('-').map(Number);
+  return new Date(anio, mes - 1, dia);
+};
 
+const validarRangoFechaVisita = (fechaVisita) => {
   const ahora = new Date();
-  const hoy = new Date();
-  hoy.setHours(0, 0, 0, 0);
-
-  const [anio, mes, dia] = fechaVisita.split('-').map(Number);
-  const fechaObj = new Date(anio, mes - 1, dia);
+  const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
+  const fechaObj = parsearFechaLocal(fechaVisita);
 
   if (fechaObj < hoy) {
-      throw new Error(MENSAJES_ERROR_FECHA.FECHA_PASADA);
-    }
-
+    throw new Error(MENSAJES_ERROR_FECHA.FECHA_PASADA);
+  }
+    
   const limiteMaximo = new Date(hoy);
   limiteMaximo.setDate(limiteMaximo.getDate() + 30);
   
@@ -46,7 +47,7 @@ const validarFechaVisita = (fechaVisita, horaCompraActual = null, parqueAbierto 
     return false;
   }
 
-  validarHorizonteCompra(fechaVisita);
+  validarRangoFechaVisita(fechaVisita);
   validarHoraCompraMismoDia(horaCompraActual);
 
   return true;

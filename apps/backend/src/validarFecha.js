@@ -1,11 +1,13 @@
+const MAXIMO_ENTRADAS_POR_FECHA = 10;
+
 const MENSAJES_ERROR = {
-  LIMITE_ACUMULADO_FECHA: 'Supera el límite de 10 entradas permitidas por fecha',
+  LIMITE_ACUMULADO_FECHA: `Supera el límite de ${MAXIMO_ENTRADAS_POR_FECHA} entradas permitidas por fecha`,
 };
 
 const validarLimiteAcumuladoPorFecha = (previas, cantidadActual) => {
   const total = previas + cantidadActual;
 
-  if (total > 10) {
+  if (total > MAXIMO_ENTRADAS_POR_FECHA) {
     throw new Error(MENSAJES_ERROR.LIMITE_ACUMULADO_FECHA);
   }
 
@@ -13,6 +15,7 @@ const validarLimiteAcumuladoPorFecha = (previas, cantidadActual) => {
 };
 
 export {
+  MAXIMO_ENTRADAS_POR_FECHA,
   MENSAJES_ERROR,
   validarLimiteAcumuladoPorFecha,
 };

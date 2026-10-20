@@ -10,6 +10,11 @@ const ESTADO_POR_RESULTADO = Object.freeze({
   rechazada: ESTADOS.RECHAZADA,
   cancelada: ESTADOS.CANCELADA,
 });
+const MENSAJE_POR_ESTADO = Object.freeze({
+  [ESTADOS.PAGADA]: "Transacción aprobada",
+  [ESTADOS.RECHAZADA]: "Transacción rechazada",
+  [ESTADOS.CANCELADA]: "Transacción cancelada",
+});
 
 function crearCompra({ formaPago, compraValida = true }) {
   return {
@@ -42,15 +47,11 @@ function renderPago(compra) {
     return "";
   }
 
-  if (compra.estado === ESTADOS.PAGADA) {
-    return '<p role="status">Transacción aprobada</p>';
+  const mensaje = MENSAJE_POR_ESTADO[compra.estado];
+
+  if (mensaje) {
+    return `<p role="status">${mensaje}</p>`;
   }
-  if (compra.estado === ESTADOS.RECHAZADA) {
-  return '<p role="status">Transacción rechazada</p>';
-}
-if (compra.estado === ESTADOS.CANCELADA) {
-  return '<p role="status">Transacción cancelada</p>';
-}
 
   return `
     <section aria-label="Mercado Pago simulado">

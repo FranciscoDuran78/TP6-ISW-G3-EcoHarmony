@@ -10,9 +10,8 @@ const validarLimiteAcumuladoPorFecha = (
   fechaActual = null,
   fechaPrevia = null,
 ) => {
-  const previasEnMismaFecha = (fechaActual && fechaPrevia && fechaActual !== fechaPrevia)
-    ? 0
-    : previas;
+  const sonFechasDistintas = fechaActual && fechaPrevia && fechaActual !== fechaPrevia;
+  const previasEnMismaFecha = sonFechasDistintas ? 0 : previas;
   const total = previasEnMismaFecha + cantidadActual;
 
   if (total > MAXIMO_ENTRADAS_POR_FECHA) {

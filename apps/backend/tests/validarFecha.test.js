@@ -34,7 +34,7 @@ describe('Validación de límite acumulado por fecha', () => {
     }).toThrow('Supera el límite de 10 entradas permitidas por fecha');
   });
 
-  // [TC-79] - ETAPA RED
+  // [TC-79] - Completado
   test('TC-79: debería permitir 10 entradas en una fecha nueva aunque haya 10 en otra fecha', () => {
     const entradasPrevias = 10;
     const cantidadActual = 10;

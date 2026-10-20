@@ -43,7 +43,8 @@ const validarDiaLaborable = (fechaObj) => {
 };
 
 const validarFeriado = (fechaVisita, feriados = []) => {
-  if (feriados.includes(fechaVisita)) {
+  const listaFeriados = Array.isArray(feriados) ? feriados : [];
+  if (listaFeriados.includes(fechaVisita)) {
     throw new Error(MENSAJES_ERROR_FECHA.PARQUE_CERRADO_FERIADO);
   }
 };

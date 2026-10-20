@@ -13,6 +13,8 @@ const validarUsuario = (usuario) => {
     typeof usuario.id !== "number"
   )
     throw new Error("Identificador de usuario inválido");
+
+  return true;
 };
 
 export { validarUsuario };

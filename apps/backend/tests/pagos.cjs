@@ -10,7 +10,7 @@ function crearCompra({ formaPago, compraValida = true }) {
   return {
     formaPago,
     compraValida,
-    estado: ESTADOS.PENDIENTE,,
+    estado: ESTADOS.PENDIENTE,
     pagada: false,
   };
 }

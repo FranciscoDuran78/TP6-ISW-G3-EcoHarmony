@@ -3,12 +3,13 @@ const MENSAJES_ERROR = {
 };
 
 const validarLimiteAcumuladoPorFecha = (previas, cantidadActual) => {
-  if (previas === 6 && cantidadActual === 5) {
+  const total = previas + cantidadActual;
+
+  if (total > 10) {
     throw new Error(MENSAJES_ERROR.LIMITE_ACUMULADO_FECHA);
   }
 
-  const total = previas + cantidadActual;
-  return total <= 10;
+  return true;
 };
 
 export {

@@ -69,5 +69,14 @@ describe('Validación de Fecha de Visita y Calendario', () => {
       }).toThrow('El parque se encuentra cerrado los días lunes');
     });
 
+
+    test('TC-28: deshabilitar el 25 de diciembre por feriado de cierre', () => {
+    const anioActual = new Date().getFullYear();
+    const fechaNavidad = `${anioActual}-12-25`;
+
+    expect(() => {
+      validarFechaVisita(fechaNavidad);
+    }).toThrow('El parque se encuentra cerrado por día feriado');
+  });
 });
 

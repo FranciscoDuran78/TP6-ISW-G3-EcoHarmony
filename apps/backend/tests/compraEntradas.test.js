@@ -55,4 +55,16 @@ describe('Fecha única por compra', () => {
 
     expect(validarFechaUnica(entradas)).toBe(true);
   });
+
+  test('TC-72: acepta visitantes con edad y tipo de pase informados', () => {
+  const visitantes = [
+    { edad: 25, tipoPase: 'Regular' },
+    { edad: 35, tipoPase: 'VIP' },
+  ];
+  
+  expect(validarEstructuraVisitantes(2, visitantes)).toBe(true);
+  });
 });
+
+
+

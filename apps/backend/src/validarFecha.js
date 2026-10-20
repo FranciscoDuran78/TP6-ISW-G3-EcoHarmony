@@ -25,7 +25,10 @@ const validarCupoDiarioGlobal = (
   visitantesTotalesParqueFecha,
   cupoDiarioConfigurado = null,
 ) => {
-  if (cupoDiarioConfigurado === null || cupoDiarioConfigurado === undefined) {
+  const sinCupoConfigurado = cupoDiarioConfigurado === null
+    || cupoDiarioConfigurado === undefined;
+
+  if (sinCupoConfigurado) {
     return true;
   }
 

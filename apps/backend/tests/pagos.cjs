@@ -14,7 +14,7 @@ function crearCompra({ formaPago, compraValida = true }) {
     pagada: false,
     intentos:
       formaPago === "tarjeta" && compraValida
-        ? [{ numero: 1, estado: "pendiente" }]
+        ? [crearIntento(1)]
         : [],
   };
 }
@@ -52,6 +52,13 @@ function renderPago(compra) {
       </form>
     </section>
   `;
+}
+
+function crearIntento(numero) {
+  return {
+    numero,
+    estado: ESTADOS.PENDIENTE,
+  };
 }
 
 exports.renderPago = renderPago;

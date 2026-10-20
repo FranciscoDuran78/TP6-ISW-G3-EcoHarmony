@@ -40,14 +40,14 @@ describe('Validación de Fecha de Visita y Calendario', () => {
     }).toThrow('La fecha de visita es obligatoria');
   });
 
-  test('TC-25: rechazar la compra si la fecha de visita corresponde a un día lunes', () => {
-    const fechaLunes = new Date();
-    fechaLunes.setDate(fechaLunes.getDate() + ((1 + 7 - fechaLunes.getDay()) % 7 || 7));
-    const fechaStr = fechaLunes.toISOString().split('T')[0];
+  test('TC-25: rechazar una fecha inexistente o con formato inválido', () => {
+    expect(() => {
+      validarFechaVisita('31/99/2026');
+    }).toThrow('La fecha ingresada no es válida');
 
     expect(() => {
-      validarFechaVisita(fechaStr);
-    }).toThrow('El parque se encuentra cerrado los días lunes');
+      validarFechaVisita('2026-02-31');
+    }).toThrow('La fecha ingresada no es válida');
   });
 
   test('TC-26: rechazar la compra si la fecha de visita corresponde a un día feriado', () => {

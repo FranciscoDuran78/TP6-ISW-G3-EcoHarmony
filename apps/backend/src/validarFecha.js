@@ -3,6 +3,7 @@ const MENSAJES_ERROR_FECHA = {
   HORIZONTE_SUPERADO: 'La fecha supera el horizonte máximo de compra permitido (1 mes)',
   FECHA_PASADA: 'La fecha de visita no puede ser anterior a la actual',
   FECHA_OBLIGATORIA: 'La fecha de visita es obligatoria',
+  FECHA_INVALIDA: 'La fecha ingresada no es válida',
   PARQUE_CERRADO_LUNES: 'El parque se encuentra cerrado los días lunes',
   PARQUE_CERRADO_FERIADO: 'El parque se encuentra cerrado por día feriado',
 };
@@ -16,8 +17,23 @@ const convertirHoraAMinutos = (horaStr) => {
 };
 
 const parsearFechaLocal = (fechaStr) => {
+  const regexFecha = /^\d{4}-\d{2}-\d{2}$/;
+  if (!regexFecha.test(fechaStr)) {
+    throw new Error(MENSAJES_ERROR_FECHA.FECHA_INVALIDA);
+  }
+
   const [anio, mes, dia] = fechaStr.split('-').map(Number);
-  return new Date(anio, mes - 1, dia);
+  const fechaObj = new Date(anio, mes - 1, dia);
+
+  if (
+    fechaObj.getFullYear() !== anio ||
+    fechaObj.getMonth() !== mes - 1 ||
+    fechaObj.getDate() !== dia
+  ) {
+    throw new Error(MENSAJES_ERROR_FECHA.FECHA_INVALIDA);
+  }
+
+  return fechaObj;
 };
 
 const validarPresenciaFecha = (fechaVisita) => {

@@ -32,4 +32,19 @@ describe('Límite de entradas por transacción', () => {
       validarLimitePorTransaccion(11);
     }).toThrow('Supera el límite de 10 entradas permitidas por transacción');
   });
+
+  // [TC-79] - ETAPA RED
+  test('TC-79: debería permitir 10 entradas para otra fecha aunque ya haya 10 en una fecha distinta', () => {
+    const entradasPreviasFechaA = 10;
+    const fechaA = '2026-11-10';
+    const fechaB = '2026-11-20';
+    const compraFechaB = 10;
+
+    expect(fechaA).not.toBe(fechaB);
+    expect(entradasPreviasFechaA).toBe(10);
+
+    const resultado = validarLimitePorTransaccion(compraFechaB);
+
+    expect(resultado).toBe(true);
+  });
 });

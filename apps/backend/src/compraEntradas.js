@@ -1,9 +1,6 @@
 const MAXIMO_ENTRADAS_POR_COMPRA = 10;
 const MAXIMO_ENTRADAS_POR_FECHA = 10;
 
-// ===========================================================================
-// [TC-20] - ETAPA REFACTOR: Diccionario completo y validación limpia (Airbnb)
-// ===========================================================================
 const MENSAJES_ERROR = {
   CANTIDAD_NO_ENTERA: 'La cantidad de entradas debe ser un número entero',
   DISCREPANCIA_VISITANTES: 'La cantidad de entradas no coincide con los visitantes ingresados',
@@ -12,6 +9,8 @@ const MENSAJES_ERROR = {
   VISITANTE_SIN_EDAD: 'Cada visitante debe indicar su edad',
   VISITANTE_SIN_PASE: 'Cada visitante debe indicar tipo de pase VIP o Regular',
   VISITANTES_VACIOS: 'Debe detallar la edad y tipo de pase de cada visitante',
+  FORMA_PAGO_REQUERIDA: 'Debe seleccionar una forma de pago válida',
+  FECHA_LUNES_BLOQUEADA: 'El parque se encuentra cerrado los días lunes',
 };
 
 const validarCantidadEntradas = (cantidad) => {
@@ -65,6 +64,64 @@ const validarEstructuraVisitantes = (cantidad, visitantes) => {
   return true;
 };
 
+const esLunes = (fechaStr) => {
+  const fecha = new Date(`${fechaStr}T00:00:00`);
+  return fecha.getDay() === 1;
+};
+
+const generarCorreoConfirmacion = (datos) => ({
+  destinatario: datos.emailUsuario,
+  fecha: datos.fecha,
+  cantidad: datos.cantidad,
+  pases: datos.pases,
+  adjunto: datos.adjunto || null,
+});
+
+const generarResumenCompra = (datos) => ({
+  cantidadEntradas: datos.cantidad,
+  fecha: datos.fecha,
+  totalPases: datos.pases ? datos.pases.length : 0,
+});
+
+const procesarCompra = (datosCompra, servicioMail = null) => {
+  const { formaPago, fecha, cantidad, pases } = datosCompra;
+
+  if (!formaPago) {
+    throw new Error(MENSAJES_ERROR.FORMA_PAGO_REQUERIDA);
+  }
+
+  if (esLunes(fecha)) {
+    throw new Error(MENSAJES_ERROR.FECHA_LUNES_BLOQUEADA);
+  }
+
+  validarCantidadEntradas(cantidad);
+  validarEstructuraVisitantes(cantidad, pases);
+
+  const estadoPago = formaPago === 'tarjeta' ? 'aprobado' : 'pendiente_validacion';
+  const resumen = generarResumenCompra(datosCompra);
+  let correo = null;
+  let errorCorreo = null;
+
+  try {
+    if (servicioMail) {
+      servicioMail(datosCompra);
+    }
+    correo = generarCorreoConfirmacion(datosCompra);
+  } catch (err) {
+    errorCorreo = err.message;
+  }
+
+  return {
+    compraConfirmada: true,
+    estadoPago,
+    cantidad,
+    fecha,
+    resumen,
+    correo,
+    errorCorreo,
+  };
+};
+
 export {
   MAXIMO_ENTRADAS_POR_COMPRA,
   MAXIMO_ENTRADAS_POR_FECHA,
@@ -72,4 +129,7 @@ export {
   validarCantidadEntradas,
   validarLimiteAcumuladoPorFecha,
   validarEstructuraVisitantes,
+  generarCorreoConfirmacion,
+  generarResumenCompra,
+  procesarCompra,
 };

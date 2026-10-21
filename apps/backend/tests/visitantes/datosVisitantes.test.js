@@ -1,4 +1,4 @@
-import { validarEstructuraVisitantes } from '../../src/compraEntradas.js';
+import { validarEstructuraVisitantes } from '../../src/domain/visitantes/validarEstructuraVisitantes.js';
 
 describe("Edad y tipo de pase de los visitantes", () => {
   test('TC-19: debería lanzar un error si a un visitante le falta indicar la edad', () => {

@@ -1,4 +1,4 @@
-import { MENSAJES_ERROR, procesarCompra } from '../../src/compraEntradas.js';
+import { MENSAJES_ERROR, procesarCompra } from '../../src/domain/compras/procesarCompra.js';
 
 describe("Flujo completo de compra", () => {
   test("TC-84: debería completar la compra con tarjeta aprobada, resumen y correo simulado", () => {

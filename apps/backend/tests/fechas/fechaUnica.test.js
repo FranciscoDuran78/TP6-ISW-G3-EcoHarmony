@@ -1,4 +1,4 @@
-import { validarFechaUnica } from '../../src/compraEntradas.js';
+import { validarFechaUnica } from '../../src/domain/fechas/validarFechaUnica.js';
 
 describe("Fecha única por compra", () => {
   test('TC-71: acepta varias entradas asociadas a la misma fecha válida', () => {

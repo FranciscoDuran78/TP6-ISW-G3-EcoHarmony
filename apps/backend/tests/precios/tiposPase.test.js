@@ -1,4 +1,4 @@
-import { esTipoPaseValido, obtenerPrecioBasePase, calcularPrecioVisitante } from '../../src/comprarEntradas.js';
+import { esTipoPaseValido, obtenerPrecioBasePase, calcularPrecioVisitante } from '../../src/domain/precios/comprarEntradas.js';
 
 describe("Elegibilidad y precio por tipo de pase", () => {
   it("TC-64: permite pase regular a los 10 años aplicando el descuento por edad", () => {

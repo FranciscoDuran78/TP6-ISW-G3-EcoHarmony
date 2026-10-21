@@ -1,4 +1,4 @@
-import { validarFechaVisita } from '../../src/validarFecha';
+import { validarFechaVisita } from '../../src/domain/fechas/validarFecha.js';
 
 describe("Anticipación de la compra", () => {
   test("TC-32: rechazar una fecha que supera el horizonte de 1 mes", () => {

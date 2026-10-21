@@ -1,4 +1,4 @@
-import { generarResumenCompra } from '../../src/compraEntradas.js';
+import { generarResumenCompra } from '../../src/domain/confirmacion/confirmacion.js';
 
 import { datosCompraValidos } from '../helpers/datosCompra.js';
 

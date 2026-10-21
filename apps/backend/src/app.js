@@ -1,5 +1,5 @@
 import express from 'express';
-import { crearServicioCompras } from './compras.js';
+import { crearServicioCompras } from './domain/compras/servicioCompras.js';
 
 // createApp recibe las dependencias (reloj, mail, usuario) para poder probarlas.
 export const createApp = (opciones) => {

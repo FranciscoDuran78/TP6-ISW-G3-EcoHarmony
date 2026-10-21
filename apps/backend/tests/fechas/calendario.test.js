@@ -1,4 +1,4 @@
-import { validarFechaVisita } from '../../src/validarFecha';
+import { validarFechaVisita } from '../../src/domain/fechas/validarFecha.js';
 
 describe("Días abiertos y cierres del parque", () => {
   test('TC-26: permitir seleccionar un martes ordinario, sin feriado de cierre', () => {

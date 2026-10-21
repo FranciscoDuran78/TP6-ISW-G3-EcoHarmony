@@ -4,7 +4,7 @@ import calcularPrecioEntrada, {
   EDAD_DESCUENTO_HASTA,
   EDAD_DESCUENTO_DESDE,
   FACTOR_DESCUENTO,
-} from './domain/calcularPrecioEntrada.js';
+} from './calcularPrecioEntrada.js';
 
 export const esTipoPaseValido = (tipoPase) => obtenerPrecioBase(tipoPase) !== undefined;
 

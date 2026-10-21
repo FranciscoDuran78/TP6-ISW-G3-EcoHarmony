@@ -1,4 +1,4 @@
-import { validarLimiteAcumuladoPorFecha } from '../../src/limitePorFecha.js';
+import { validarLimiteAcumuladoPorFecha } from '../../src/domain/entradas/limitePorFecha.js';
 
 describe("Límite acumulado por fecha", () => {
   test('TC-76: debería aceptar un total de 10 entradas para una fecha entre varias compras', () => {

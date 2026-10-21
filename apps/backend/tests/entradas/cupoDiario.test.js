@@ -1,4 +1,4 @@
-import { validarCupoDiarioGlobal, validarLimiteAcumuladoPorFecha } from '../../src/limitePorFecha.js';
+import { validarCupoDiarioGlobal, validarLimiteAcumuladoPorFecha } from '../../src/domain/entradas/limitePorFecha.js';
 
 describe("Cupo diario del parque", () => {
   test('TC-80: debería aceptar una compra válida cuando no hay cupo diario configurado', () => {

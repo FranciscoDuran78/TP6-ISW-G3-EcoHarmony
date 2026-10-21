@@ -1,4 +1,4 @@
-import { validarFechaVisita } from '../../src/validarFecha';
+import { validarFechaVisita } from '../../src/domain/fechas/validarFecha.js';
 
 describe("Fecha de visita obligatoria y válida", () => {
   test('TC-21: permitir seleccionar el día actual si el parque está abierto y se compra antes de las 17:30', () => {

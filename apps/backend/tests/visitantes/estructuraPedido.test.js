@@ -1,4 +1,4 @@
-import { validarEstructuraVisitantes } from '../../src/compraEntradas.js';
+import { validarEstructuraVisitantes } from '../../src/domain/visitantes/validarEstructuraVisitantes.js';
 
 describe("Correspondencia entre visitantes y entradas", () => {
   test('TC-17: debería lanzar un error si no se envía el listado de visitantes', () => {

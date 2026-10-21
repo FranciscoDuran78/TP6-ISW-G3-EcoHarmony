@@ -1,4 +1,4 @@
-import { calcularPreciosVisitantes } from '../../src/compraEntradas.js';
+import { calcularPreciosVisitantes } from '../../src/domain/precios/preciosVisitantes.js';
 
 describe("Precios según las edades de los visitantes", () => {
   test('TC-69: conserva las edades y aplica el precio correspondiente', () => {

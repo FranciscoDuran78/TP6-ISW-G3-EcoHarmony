@@ -1,4 +1,4 @@
-import { validarCantidadEntradas } from '../../src/compraEntradas.js';
+import { validarCantidadEntradas } from '../../src/domain/entradas/validarCantidadEntradas.js';
 
 describe("Cantidad de entradas por compra", () => {
   test('TC-10: debería lanzar un error cuando la cantidad de entradas es 11', () => {

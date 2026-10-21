@@ -1,6 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const pagos = require("../../src/pagos.cjs");
+const pagos = require("../../src/domain/pagos/pagos.cjs");
 
 for (const resultadoAnterior of ["rechazada", "cancelada"]) {
   test(`TC-46: permite reintentar después de ${resultadoAnterior}`, () => {

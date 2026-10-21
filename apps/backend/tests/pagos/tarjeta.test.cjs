@@ -1,6 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const pagos = require("../../src/pagos.cjs");
+const pagos = require("../../src/domain/pagos/pagos.cjs");
 
 test("TC-42: muestra Mercado Pago simulado para una compra válida", () => {
   const compra = pagos.crearCompra({

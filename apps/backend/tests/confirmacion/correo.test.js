@@ -1,4 +1,5 @@
-import { generarCorreoConfirmacion, procesarCompra } from '../../src/compraEntradas.js';
+import { generarCorreoConfirmacion } from '../../src/domain/confirmacion/confirmacion.js';
+import { procesarCompra } from '../../src/domain/compras/procesarCompra.js';
 
 import { datosCompraValidos } from '../helpers/datosCompra.js';
 

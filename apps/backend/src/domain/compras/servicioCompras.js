@@ -1,14 +1,11 @@
-import calcularPrecioEntrada from './domain/calcularPrecioEntrada.js';
-import {
-  calcularPreciosVisitantes,
-  generarCorreoConfirmacion,
-  generarResumenCompra,
-  validarCantidadEntradas,
-  validarEstructuraVisitantes,
-} from './compraEntradas.js';
-import { calcularTotalCompra } from './comprarEntradas.js';
-import pagos from './pagos.cjs';
-import { validarFechaVisita } from './validarFecha.js';
+import calcularPrecioEntrada from '../precios/calcularPrecioEntrada.js';
+import { calcularPreciosVisitantes } from '../precios/preciosVisitantes.js';
+import { generarCorreoConfirmacion, generarResumenCompra } from '../confirmacion/confirmacion.js';
+import { validarCantidadEntradas } from '../entradas/validarCantidadEntradas.js';
+import { validarEstructuraVisitantes } from '../visitantes/validarEstructuraVisitantes.js';
+import { calcularTotalCompra } from '../precios/comprarEntradas.js';
+import pagos from '../pagos/pagos.cjs';
+import { validarFechaVisita } from '../fechas/validarFecha.js';
 
 const FORMAS_DE_PAGO = ['tarjeta', 'efectivo'];
 const RESULTADOS_DE_PAGO = ['aprobada', 'rechazada', 'cancelada'];

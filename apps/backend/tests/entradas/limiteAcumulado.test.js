@@ -1,4 +1,4 @@
-import { validarLimiteAcumuladoPorFecha } from '../../src/compraEntradas.js';
+import { validarLimiteAcumuladoPorFecha } from '../../src/domain/entradas/limitePorFecha.js';
 
 describe("Límite acumulado en la validación de compra", () => {
   test('TC-13: debería permitir comprar 4 entradas si el usuario ya compró 6 para esa misma fecha (Total = 10)', () => {

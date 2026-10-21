@@ -1,4 +1,4 @@
-import calcularPrecioEntrada from "../../src/domain/calcularPrecioEntrada";
+import calcularPrecioEntrada from "../../src/domain/precios/calcularPrecioEntrada.js";
 
 describe("Precio de entrada y descuentos por edad", () => {
   test("TC-54: cobra el precio regular completo a un adulto sin descuento", () => {

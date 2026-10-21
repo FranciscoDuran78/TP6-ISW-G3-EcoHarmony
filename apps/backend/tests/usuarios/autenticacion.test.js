@@ -1,4 +1,4 @@
-import { validarUsuario } from '../../src/domain/usuarios.js';
+import { validarUsuario } from '../../src/domain/usuarios/usuarios.js';
 
 describe("Autenticación del usuario", () => {
   test("TC-01: debería lanzar un error cuando el usuario no es proporcionado", () => {

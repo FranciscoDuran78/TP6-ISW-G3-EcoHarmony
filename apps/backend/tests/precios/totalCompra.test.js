@@ -1,4 +1,4 @@
-import { calcularTotalCompra } from '../../src/comprarEntradas.js';
+import { calcularTotalCompra } from '../../src/domain/precios/comprarEntradas.js';
 
 describe("Subtotal y total de la compra", () => {
   it("TC-63: calcula subtotal y total de varios pases con edades diferentes", () => {

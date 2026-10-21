@@ -5,7 +5,7 @@ import {
 } from '../../src/domain/entradas/limitePorFecha.js';
 
 describe('Cupo diario del parque', () => {
-  // [TC-80] - ETAPA RED
+  // [TC-80] - ETAPA GREEN
   test('TC-80: debería permitir comprar 10 entradas aunque ya existan 150 vendidas ese día', () => {
     const visitantesTotalesParqueFecha = 150;
     const cupoDiarioConfigurado = null;

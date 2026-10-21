@@ -45,8 +45,15 @@ const validarCupoDiarioGlobal = (
   return typeof visitantesTotalesParqueFecha === 'number';
 };
 
-// Stub RED TC-80: aún no calcula el total sin cupo diario.
-const validarCompraSinCupoDiario = () => undefined;
+const validarCompraSinCupoDiario = (
+  visitantesTotalesParqueFecha,
+  cantidadEntradas,
+  cupoDiarioConfigurado = null,
+) => {
+  validarCupoDiarioGlobal(visitantesTotalesParqueFecha, cupoDiarioConfigurado);
+  validarLimitePorTransaccion(cantidadEntradas);
+  return visitantesTotalesParqueFecha + cantidadEntradas;
+};
 
 export {
   MAXIMO_ENTRADAS_POR_FECHA,

@@ -1,4 +1,4 @@
-﻿const MAXIMO_ENTRADAS_POR_FECHA = 10;
+const MAXIMO_ENTRADAS_POR_FECHA = 10;
 const MAXIMO_ENTRADAS_POR_TRANSACCION = 10;
 
 const MENSAJES_ERROR = {
@@ -50,8 +50,16 @@ const validarCompraSinCupoDiario = (
   cantidadEntradas,
   cupoDiarioConfigurado = null,
 ) => {
-  validarCupoDiarioGlobal(visitantesTotalesParqueFecha, cupoDiarioConfigurado);
-  validarLimitePorTransaccion(cantidadEntradas);
+  const cupoPermite = validarCupoDiarioGlobal(
+    visitantesTotalesParqueFecha,
+    cupoDiarioConfigurado,
+  );
+  const transaccionPermite = validarLimitePorTransaccion(cantidadEntradas);
+
+  if (!cupoPermite || !transaccionPermite) {
+    return undefined;
+  }
+
   return visitantesTotalesParqueFecha + cantidadEntradas;
 };
 

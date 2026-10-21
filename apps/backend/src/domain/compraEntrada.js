@@ -23,4 +23,8 @@ const validarUsuario = (usuario) => {
   return true;
 };
 
-export { validarUsuario };
+const validarCantidadAComprar = (cantidad) => {
+  return;
+};
+
+export { validarUsuario, validarCantidadAComprar };

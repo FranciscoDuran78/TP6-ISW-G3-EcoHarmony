@@ -1,11 +1,12 @@
 /* eslint-disable */
 
-import { validarUsuario } from "../src/compraEntrada";
+import { validarUsuario } from "../src/domain/compraEntrada";
 
 // | TC-01 | Autenticación | Rechazar compra cuando el usuario no es proporcionado | usuario: null | Falla: Lanza error 'Debe iniciar sesión con un usuario registrado' |
 // | TC-02 | Autenticación | Rechazar compra cuando el usuario no está registrado | usuario: { id: 1, registrado: false } | Falla: Lanza error 'Se permite la compra solo a usuarios registrados' |
 // | TC-03 | Autenticación | Rechazar compra cuando el usuario registrado no tiene ID válido | usuario: { id: null, registrado: true } | Falla: Lanza error 'Identificador de usuario inválido' |
 // | TC-04 | Autenticación | Permitir validación cuando el usuario está registrado y es válido | usuario: { id: 10, registrado: true } | Pasa la validación de usuario |
+
 describe("Validación de usuario para comprar entradas", () => {
   test("TC-01: debería lanzar un error cuando el usuario no es proporcionado", () => {
     const usuario = null;

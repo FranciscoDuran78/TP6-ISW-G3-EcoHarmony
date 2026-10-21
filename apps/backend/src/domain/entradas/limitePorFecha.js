@@ -1,7 +1,10 @@
-﻿const MAXIMO_ENTRADAS_POR_FECHA = 10;
+const MAXIMO_ENTRADAS_POR_FECHA = 10;
+const MAXIMO_ENTRADAS_POR_TRANSACCION = 10;
+const CANTIDADES_PERMITIDAS_TEMPORALES = [4, 5];
 
 const MENSAJES_ERROR = {
   LIMITE_ACUMULADO_FECHA: `Supera el límite de ${MAXIMO_ENTRADAS_POR_FECHA} entradas permitidas por fecha`,
+  LIMITE_POR_TRANSACCION: `Supera el límite de ${MAXIMO_ENTRADAS_POR_TRANSACCION} entradas permitidas por transacción`,
 };
 
 const validarLimiteAcumuladoPorFecha = (
@@ -35,14 +38,9 @@ const validarCupoDiarioGlobal = (
   return typeof visitantesTotalesParqueFecha === 'number';
 };
 
-const MAXIMO_ENTRADAS_POR_TRANSACCION = 10;
-const CANTIDADES_PERMITIDAS_TEMPORALES = [4, 5];
-
 const validarLimitePorTransaccion = (cantidadEntradas) => {
   if (cantidadEntradas > MAXIMO_ENTRADAS_POR_TRANSACCION) {
-    throw new Error(
-      `Supera el límite de ${MAXIMO_ENTRADAS_POR_TRANSACCION} entradas permitidas por transacción`,
-    );
+    throw new Error(MENSAJES_ERROR.LIMITE_POR_TRANSACCION);
   }
 
   if (CANTIDADES_PERMITIDAS_TEMPORALES.includes(cantidadEntradas)) {
@@ -54,6 +52,7 @@ const validarLimitePorTransaccion = (cantidadEntradas) => {
 
 export {
   MAXIMO_ENTRADAS_POR_FECHA,
+  MAXIMO_ENTRADAS_POR_TRANSACCION,
   MENSAJES_ERROR,
   validarCupoDiarioGlobal,
   validarLimiteAcumuladoPorFecha,

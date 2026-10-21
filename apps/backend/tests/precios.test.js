@@ -24,4 +24,10 @@ describe("calcularPrecioEntrada", () => {
 
     expect(precio).toBe(10000);
   });
+
+  test("TC-60: cobra el precio completo a un visitante de 59 años con pase regular", () => {
+    const precio = calcularPrecioEntrada(59, "Regular");
+
+    expect(precio).toBe(10000);
+  });
 });

@@ -14,7 +14,7 @@ describe('Límite de entradas por transacción', () => {
     expect(resultado).toBe(true);
   });
 
-  // [TC-77] - ETAPA GREEN
+  // [TC-77] - ETAPA REFACTOR
   test('TC-77: debería permitir una transacción de 5 entradas aunque el acumulado de la fecha llegue a 11', () => {
     const comprasPreviasMismaFecha = 6;
     const compraActual = 5;

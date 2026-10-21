@@ -35,8 +35,10 @@ const validarCupoDiarioGlobal = (
   return typeof visitantesTotalesParqueFecha === 'number';
 };
 
+const CANTIDADES_PERMITIDAS_TEMPORALES = [4, 5];
+
 const validarLimitePorTransaccion = (cantidadEntradas) => {
-  if (cantidadEntradas === 4 || cantidadEntradas === 5) {
+  if (CANTIDADES_PERMITIDAS_TEMPORALES.includes(cantidadEntradas)) {
     return true;
   }
 

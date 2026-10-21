@@ -1,6 +1,5 @@
-const MAXIMO_ENTRADAS_POR_FECHA = 10;
+﻿const MAXIMO_ENTRADAS_POR_FECHA = 10;
 const MAXIMO_ENTRADAS_POR_TRANSACCION = 10;
-const CANTIDADES_PERMITIDAS_TEMPORALES = [4, 5];
 
 const MENSAJES_ERROR = {
   LIMITE_ACUMULADO_FECHA: `Supera el límite de ${MAXIMO_ENTRADAS_POR_FECHA} entradas permitidas por fecha`,
@@ -43,11 +42,7 @@ const validarLimitePorTransaccion = (cantidadEntradas) => {
     throw new Error(MENSAJES_ERROR.LIMITE_POR_TRANSACCION);
   }
 
-  if (CANTIDADES_PERMITIDAS_TEMPORALES.includes(cantidadEntradas)) {
-    return true;
-  }
-
-  return undefined;
+  return true;
 };
 
 export {

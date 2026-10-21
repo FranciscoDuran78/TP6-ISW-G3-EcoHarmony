@@ -30,4 +30,10 @@ describe("calcularPrecioEntrada", () => {
 
     expect(precio).toBe(10000);
   });
+
+  test("TC-61: aplica 50% de descuento en el límite de 60 años con pase VIP", () => {
+    const precio = calcularPrecioEntrada(60, "VIP");
+
+    expect(precio).toBe(10000);
+  });
 });

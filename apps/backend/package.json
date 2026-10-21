@@ -7,11 +7,17 @@
   "scripts": {
     "dev": "node --watch src/server.js",
     "start": "node src/server.js",
-    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand"
+    "test": "node --experimental-vm-modules ../../node_modules/jest/bin/jest.js --runInBand && node --test tests/pagos.test.cjs"
   },
   "dependencies": {
     "better-sqlite3": "^12.4.1",
     "express": "^5.1.0"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "\\.cjs$"
+    ]
   },
   "devDependencies": {
     "jest": "^30.5.2"

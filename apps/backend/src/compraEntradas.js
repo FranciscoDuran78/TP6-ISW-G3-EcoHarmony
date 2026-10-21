@@ -1,10 +1,19 @@
+import calcularPrecioEntrada from './domain/calcularPrecioEntrada.js';
+import {
+  MAXIMO_ENTRADAS_POR_FECHA,
+  MENSAJES_ERROR as MENSAJES_ERROR_LIMITE,
+  validarLimiteAcumuladoPorFecha,
+} from './limitePorFecha.js';
+
 const MAXIMO_ENTRADAS_POR_COMPRA = 10;
-const MAXIMO_ENTRADAS_POR_FECHA = 10;
 
 const MENSAJES_ERROR = {
   CANTIDAD_NO_ENTERA: 'La cantidad de entradas debe ser un número entero',
   DISCREPANCIA_VISITANTES: 'La cantidad de entradas no coincide con los visitantes ingresados',
-  LIMITE_ACUMULADO_FECHA: `Supera el límite de ${MAXIMO_ENTRADAS_POR_FECHA} entradas permitidas por fecha`,
+  ...MENSAJES_ERROR_LIMITE,
+  EDAD_NO_VALIDA: 'La edad no es válida',
+  ENTRADAS_VACIAS: 'La compra debe incluir entradas',
+  FECHA_UNICA_REQUERIDA: 'Todas las entradas deben tener la misma fecha de visita',
   LIMITE_ENTRADAS_SUPERADO: `La cantidad de entradas no puede ser mayor a ${MAXIMO_ENTRADAS_POR_COMPRA}`,
   VISITANTE_SIN_EDAD: 'Cada visitante debe indicar su edad',
   VISITANTE_SIN_PASE: 'Cada visitante debe indicar tipo de pase VIP o Regular',
@@ -24,25 +33,13 @@ const validarCantidadEntradas = (cantidad) => {
   return true;
 };
 
-const validarLimiteAcumuladoPorFecha = (
-  previas,
-  cantidadActual,
-  fechaActual = null,
-  fechaPrevia = null,
-) => {
-  const sonFechasDistintas = fechaActual && fechaPrevia && fechaActual !== fechaPrevia;
-  const previasEnMismaFecha = sonFechasDistintas ? 0 : previas;
-  const totalAcumulado = previasEnMismaFecha + cantidadActual;
-
-  if (totalAcumulado > MAXIMO_ENTRADAS_POR_FECHA) {
-    throw new Error(MENSAJES_ERROR.LIMITE_ACUMULADO_FECHA);
-  }
-  return true;
-};
-
 const validarDatosIndividualesVisitante = (visitante) => {
   if (visitante.edad === null || visitante.edad === undefined) {
     throw new Error(MENSAJES_ERROR.VISITANTE_SIN_EDAD);
+  }
+
+  if (visitante.edad < 0) {
+    throw new Error(MENSAJES_ERROR.EDAD_NO_VALIDA);
   }
 
   if (!visitante.tipoPase || visitante.tipoPase.trim() === '') {
@@ -60,6 +57,26 @@ const validarEstructuraVisitantes = (cantidad, visitantes) => {
   }
 
   visitantes.forEach(validarDatosIndividualesVisitante);
+
+  return true;
+};
+
+const calcularPreciosVisitantes = (visitantes) => visitantes.map((visitante) => ({
+  ...visitante,
+  precio: calcularPrecioEntrada(visitante.edad, visitante.tipoPase),
+}));
+
+const validarFechaUnica = (entradas) => {
+  if (!Array.isArray(entradas) || entradas.length === 0) {
+    throw new Error(MENSAJES_ERROR.ENTRADAS_VACIAS);
+  }
+
+  const [{ fechaVisita }] = entradas;
+  const todasCoinciden = entradas.every((entrada) => entrada.fechaVisita === fechaVisita);
+
+  if (!fechaVisita || !todasCoinciden) {
+    throw new Error(MENSAJES_ERROR.FECHA_UNICA_REQUERIDA);
+  }
 
   return true;
 };
@@ -129,6 +146,8 @@ export {
   validarCantidadEntradas,
   validarLimiteAcumuladoPorFecha,
   validarEstructuraVisitantes,
+  calcularPreciosVisitantes,
+  validarFechaUnica,
   generarCorreoConfirmacion,
   generarResumenCompra,
   procesarCompra,

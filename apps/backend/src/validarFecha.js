@@ -98,9 +98,10 @@ const validarFechaVisita = (fechaVisita, horaCompraActual = null, parqueAbierto 
   const fechaObj = parsearFechaLocal(fechaVisita);
 
   validarFeriado(fechaVisita, feriados);
-  validarDiaLaborable(fechaObj);
-
+  // El rango va antes que el lunes: una fecha pasada o lejana que cae lunes
+  // debe informar eso, no "cerrado los lunes" (TC-23 fallaba los miércoles).
   validarRangoFechaVisita(fechaObj);
+  validarDiaLaborable(fechaObj);
   validarHoraCompraMismoDia(horaCompraActual);
 
   return true;

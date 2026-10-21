@@ -1,6 +1,6 @@
 const { test } = require("node:test");
 const assert = require("node:assert/strict");
-const pagos = require("./pagos.cjs");
+const pagos = require("../src/pagos.cjs");
 
 test("TC-41: valida la compra en efectivo al confirmar boletería", () => {
   const compra = pagos.crearCompra({

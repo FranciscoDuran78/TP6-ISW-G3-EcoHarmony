@@ -1,4 +1,11 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
+// El formulario reutiliza la validación ya cubierta por Jest en el backend.
+/* eslint-disable import/no-relative-packages */
+import {
+  MENSAJES_ERROR,
+  validarLimiteAcumuladoPorFecha,
+} from '../../backend/src/limitePorFecha.js';
+/* eslint-enable import/no-relative-packages */
 import './App.css';
 
 const PRECIOS_BASE = {
@@ -39,6 +46,37 @@ const calcularPrecioVisitante = (edad, tipoPase) => {
   return precioBase;
 };
 
+const CLAVE_COMPRAS_POR_FECHA = 'ecoharmony-compras-por-fecha';
+
+const leerComprasPorFecha = () => {
+  try {
+    const guardadas = sessionStorage.getItem(CLAVE_COMPRAS_POR_FECHA);
+    return guardadas ? JSON.parse(guardadas) : {};
+  } catch {
+    return {};
+  }
+};
+
+const obtenerPreviasEnFecha = (fecha) => {
+  const compras = leerComprasPorFecha();
+  return compras[fecha] || 0;
+};
+
+const registrarCompraConfirmada = (fecha, cantidad) => {
+  const compras = leerComprasPorFecha();
+  compras[fecha] = (compras[fecha] || 0) + cantidad;
+  sessionStorage.setItem(CLAVE_COMPRAS_POR_FECHA, JSON.stringify(compras));
+};
+
+const mensajeSiExcedeLimite = (fecha, cantidad) => {
+  try {
+    validarLimiteAcumuladoPorFecha(obtenerPreviasEnFecha(fecha), cantidad);
+    return '';
+  } catch (error) {
+    return error.message || MENSAJES_ERROR.LIMITE_ACUMULADO_FECHA;
+  }
+};
+
 const obtenerEtiquetaDescuento = (edad) => {
   const edadNumerica = Number(edad);
   if (edad === '' || Number.isNaN(edadNumerica)) return 'Sin calcular';
@@ -74,6 +112,12 @@ function App() {
       return;
     }
 
+    const errorLimiteFecha = mensajeSiExcedeLimite(fechaVisita, valor);
+    if (errorLimiteFecha) {
+      setMensajeError(errorLimiteFecha);
+      return;
+    }
+
     setMensajeError('');
     const nuevosVisitantes = [...visitantes];
 
@@ -97,6 +141,8 @@ function App() {
     setVisitantes(copiaVisitantes);
   };
 
+  const entradasPreviasFecha = obtenerPreviasEnFecha(fechaVisita);
+
   const totalCompra = visitantes.reduce(
     (acumulador, vis) => acumulador + calcularPrecioVisitante(vis.edad, vis.tipoPase),
     0,
@@ -112,6 +158,12 @@ function App() {
 
     if (cantidadEntradas > 10 || cantidadEntradas < 1) {
       setMensajeError('La cantidad de entradas no puede ser mayor a 10.');
+      return;
+    }
+
+    const errorLimiteFecha = mensajeSiExcedeLimite(fechaVisita, cantidadEntradas);
+    if (errorLimiteFecha) {
+      setMensajeError(errorLimiteFecha);
       return;
     }
 
@@ -134,6 +186,7 @@ function App() {
     if (formaPago === 'TARJETA') {
       setPasoActual('MERCADO_PAGO');
     } else {
+      registrarCompraConfirmada(fechaVisita, cantidadEntradas);
       setPasoActual('CONFIRMACION');
     }
   };
@@ -245,7 +298,10 @@ function App() {
                         type="button"
                         disabled={item.cerrado}
                         className={claseDia}
-                        onClick={() => setFechaVisita(item.fechaIso)}
+                        onClick={() => {
+                          setFechaVisita(item.fechaIso);
+                          setMensajeError(mensajeSiExcedeLimite(item.fechaIso, cantidadEntradas));
+                        }}
                       >
                         <span className="nombre-dia">{item.diaSemana}</span>
                         <span className="numero-dia">{item.numero}</span>
@@ -266,6 +322,9 @@ function App() {
                   </label>
                   <p className="nota-campo">
                     Máximo permitido: 10 entradas por usuario para una misma fecha.
+                    {entradasPreviasFecha > 0 && (
+                      <span>{` Ya compraste ${entradasPreviasFecha} para esta fecha.`}</span>
+                    )}
                   </p>
                 </div>
                 <input
@@ -488,7 +547,10 @@ function App() {
                 <button
                   type="button"
                   className="btn-confirmar"
-                  onClick={() => setPasoActual('CONFIRMACION')}
+                  onClick={() => {
+                    registrarCompraConfirmada(fechaVisita, cantidadEntradas);
+                    setPasoActual('CONFIRMACION');
+                  }}
                 >
                   Pagar ${totalCompra.toLocaleString('es-AR')} y Confirmar
                 </button>

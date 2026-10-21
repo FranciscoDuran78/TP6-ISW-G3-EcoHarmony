@@ -34,6 +34,9 @@ module.exports = {
         node: true,
         jest: true,
       },
+      rules: {
+        'import/extensions': ['error', 'ignorePackages', { js: 'always' }],
+      },
     },
     {
       files: ['apps/frontend/**/*.jsx'],

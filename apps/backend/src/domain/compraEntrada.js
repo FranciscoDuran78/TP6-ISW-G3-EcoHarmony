@@ -6,6 +6,11 @@ const MENSAJES_ERROR_USUARIO = {
   ID_USUARIO_INVALIDO: "Identificador de usuario inválido",
 };
 
+const MENSAJES_ERROR_CANTIDAD = {
+  CANTIDAD_NO_ENTERA: "La cantidad de entradas debe ser un número entero",
+  CANTIDAD_INVALIDA: "Debe iniciar sesión con un usuario registrado",
+};
+
 const validarUsuario = (usuario) => {
   if (usuario === null)
     throw new Error(MENSAJES_ERROR_USUARIO.USUARIO_INVALIDO);
@@ -23,12 +28,16 @@ const validarUsuario = (usuario) => {
   return true;
 };
 
-const validarCantidadAComprar = (cantidad) => {
+const validarCantidadEntradas = (cantidad) => {
+  if (!Number.isInteger(cantidad)) {
+    throw new Error(MENSAJES_ERROR_CANTIDAD.CANTIDAD_NO_ENTERA);
+  }
+
   if (cantidad <= 0) {
-    throw new Error("Debe iniciar sesión con un usuario registrado");
+    throw new Error(MENSAJES_ERROR_CANTIDAD.CANTIDAD_INVALIDA);
   }
 
   return true;
 };
 
-export { validarUsuario, validarCantidadAComprar };
+export { validarUsuario, validarCantidadEntradas };

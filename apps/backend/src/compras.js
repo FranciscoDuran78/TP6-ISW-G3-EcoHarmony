@@ -7,7 +7,6 @@ import {
   validarEstructuraVisitantes,
 } from './compraEntradas.js';
 import { calcularTotalCompra } from './comprarEntradas.js';
-import { validarLimiteAcumuladoPorFecha } from './limitePorFecha.js';
 import pagos from './pagos.cjs';
 import { validarFechaVisita } from './validarFecha.js';
 
@@ -162,12 +161,6 @@ export const crearServicioCompras = ({
     }
   };
 
-  // ponytail: una compra rechazada o cancelada libera sus entradas; el reintento lo revalida.
-  const entradasPreviasEnFecha = (fechaVisita) => [...compras.values()]
-    .filter((c) => c.usuarioId === usuario.id && c.fechaVisita === fechaVisita
-      && !['cancelada', 'rechazada'].includes(c.estado))
-    .reduce((suma, c) => suma + c.cantidad, 0);
-
   // El calendario usa el mismo validador que la compra: lo que muestra abierto, se puede comprar.
   const calendario = () => {
     const momento = ahora();
@@ -218,8 +211,8 @@ export const crearServicioCompras = ({
       validarCantidadEntradas(cantidad);
       validarEstructuraVisitantes(cantidad, visitantes);
 
+      // El máximo de 10 es por transacción (validarCantidadEntradas): se pueden hacer varias por fecha.
       const conPrecio = calcularPreciosVisitantes(visitantes);
-      validarLimiteAcumuladoPorFecha(entradasPreviasEnFecha(fechaVisita), cantidad);
 
       return { formaPagoValida: validarFormaPago(formaPago), visitantesConPrecio: conPrecio };
     });
@@ -263,9 +256,6 @@ export const crearServicioCompras = ({
     const compra = obtener(id);
 
     try {
-      if (['cancelada', 'rechazada'].includes(compra.estado)) {
-        validarLimiteAcumuladoPorFecha(entradasPreviasEnFecha(compra.fechaVisita), compra.cantidad);
-      }
       pagos.reintentarPago(compra);
     } catch (error) {
       throw new ErrorCompra(409, error.message);

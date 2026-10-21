@@ -1,6 +1,6 @@
-import { validarUsuario } from "../src/domain/usuarios.js";
+import { validarUsuario } from '../../src/domain/usuarios.js';
 
-describe("Validación de usuario para comprar entradas", () => {
+describe("Autenticación del usuario", () => {
   test("TC-01: debería lanzar un error cuando el usuario no es proporcionado", () => {
     const usuario = null;
 

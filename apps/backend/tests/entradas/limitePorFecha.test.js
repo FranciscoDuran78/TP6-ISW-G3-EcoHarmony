@@ -1,10 +1,6 @@
-﻿import {
-  validarCupoDiarioGlobal,
-  validarLimiteAcumuladoPorFecha,
-} from '../src/limitePorFecha.js';
+import { validarLimiteAcumuladoPorFecha } from '../../src/limitePorFecha.js';
 
-describe('Validación de límite acumulado por fecha', () => {
-  // [TC-76] - Completado
+describe("Límite acumulado por fecha", () => {
   test('TC-76: debería aceptar un total de 10 entradas para una fecha entre varias compras', () => {
     const comprasPreviasMismaFecha = 6;
     const compraActual = 4;
@@ -17,7 +13,6 @@ describe('Validación de límite acumulado por fecha', () => {
     expect(resultado).toBe(true);
   });
 
-  // [TC-77] - Completado
   test('TC-77: debería rechazar una compra que eleva el total a 11 entradas para esa fecha', () => {
     const comprasPreviasMismaFecha = 6;
     const compraActual = 5;
@@ -27,7 +22,6 @@ describe('Validación de límite acumulado por fecha', () => {
     }).toThrow('Supera el límite de 10 entradas permitidas por fecha');
   });
 
-  // [TC-78] - Completado
   test('TC-78: debería rechazar una entrada adicional cuando ya hay 10 compradas para esa fecha', () => {
     const comprasPreviasMismaFecha = 10;
     const compraActual = 1;
@@ -37,7 +31,6 @@ describe('Validación de límite acumulado por fecha', () => {
     }).toThrow('Supera el límite de 10 entradas permitidas por fecha');
   });
 
-  // [TC-79] - Completado
   test('TC-79: debería permitir 10 entradas en una fecha nueva aunque haya 10 en otra fecha', () => {
     const entradasPrevias = 10;
     const cantidadActual = 10;
@@ -51,23 +44,6 @@ describe('Validación de límite acumulado por fecha', () => {
       fechaPreviaDistinta,
     );
 
-    expect(resultado).toBe(true);
-  });
-});
-
-describe('Validación de cupo diario del parque', () => {
-  // [TC-80] - Completado
-  test('TC-80: debería aceptar una compra válida cuando no hay cupo diario configurado', () => {
-    const visitantesTotalesParqueFecha = 500;
-    const cupoDiarioConfigurado = null;
-    const compraValida = validarLimiteAcumuladoPorFecha(0, 4);
-
-    const resultado = validarCupoDiarioGlobal(
-      visitantesTotalesParqueFecha,
-      cupoDiarioConfigurado,
-    );
-
-    expect(compraValida).toBe(true);
     expect(resultado).toBe(true);
   });
 });

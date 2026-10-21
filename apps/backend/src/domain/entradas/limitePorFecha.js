@@ -1,4 +1,4 @@
-const MAXIMO_ENTRADAS_POR_FECHA = 10;
+﻿const MAXIMO_ENTRADAS_POR_FECHA = 10;
 const MAXIMO_ENTRADAS_POR_TRANSACCION = 10;
 
 const MENSAJES_ERROR = {
@@ -45,10 +45,14 @@ const validarCupoDiarioGlobal = (
   return typeof visitantesTotalesParqueFecha === 'number';
 };
 
+// Stub RED TC-80: aún no calcula el total sin cupo diario.
+const validarCompraSinCupoDiario = () => undefined;
+
 export {
   MAXIMO_ENTRADAS_POR_FECHA,
   MAXIMO_ENTRADAS_POR_TRANSACCION,
   MENSAJES_ERROR,
+  validarCompraSinCupoDiario,
   validarCupoDiarioGlobal,
   validarLimiteAcumuladoPorFecha,
   validarLimitePorTransaccion,

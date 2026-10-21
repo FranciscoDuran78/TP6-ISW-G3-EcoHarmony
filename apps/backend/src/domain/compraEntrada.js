@@ -24,7 +24,9 @@ const validarUsuario = (usuario) => {
 };
 
 const validarCantidadAComprar = (cantidad) => {
-  return;
+  if (cantidad <= 0) {
+    throw new Error("Debe iniciar sesión con un usuario registrado");
+  }
 };
 
 export { validarUsuario, validarCantidadAComprar };

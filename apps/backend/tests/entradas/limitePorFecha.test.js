@@ -1,7 +1,7 @@
 import { validarLimitePorTransaccion } from '../../src/domain/entradas/limitePorFecha.js';
 
 describe('Límite de entradas por transacción', () => {
-  // [TC-76] - ETAPA GREEN
+  // [TC-76] - ETAPA REFACTOR
   test('TC-76: debería permitir una segunda transacción de 4 entradas tras haber comprado 6 para la misma fecha', () => {
     const comprasPreviasMismaFecha = 6;
     const compraActual = 4;

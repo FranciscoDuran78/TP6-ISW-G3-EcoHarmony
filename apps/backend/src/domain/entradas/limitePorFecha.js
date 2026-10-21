@@ -35,11 +35,11 @@ const validarCupoDiarioGlobal = (
   return typeof visitantesTotalesParqueFecha === 'number';
 };
 
-// GREEN TC-76: triangulación mínima — solo la cantidad de este caso.
 const validarLimitePorTransaccion = (cantidadEntradas) => {
   if (cantidadEntradas === 4) {
     return true;
   }
+
   return undefined;
 };
 

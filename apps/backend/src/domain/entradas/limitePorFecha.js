@@ -35,8 +35,13 @@ const validarCupoDiarioGlobal = (
   return typeof visitantesTotalesParqueFecha === 'number';
 };
 
-// Stub RED TC-76: aún no implementa el límite por transacción.
-const validarLimitePorTransaccion = () => undefined;
+// GREEN TC-76: triangulación mínima — solo la cantidad de este caso.
+const validarLimitePorTransaccion = (cantidadEntradas) => {
+  if (cantidadEntradas === 4) {
+    return true;
+  }
+  return undefined;
+};
 
 export {
   MAXIMO_ENTRADAS_POR_FECHA,

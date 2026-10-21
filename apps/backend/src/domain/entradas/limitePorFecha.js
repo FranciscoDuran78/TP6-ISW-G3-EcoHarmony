@@ -35,9 +35,13 @@ const validarCupoDiarioGlobal = (
   return typeof visitantesTotalesParqueFecha === 'number';
 };
 
+// Stub RED TC-76: aún no implementa el límite por transacción.
+const validarLimitePorTransaccion = () => undefined;
+
 export {
   MAXIMO_ENTRADAS_POR_FECHA,
   MENSAJES_ERROR,
   validarCupoDiarioGlobal,
   validarLimiteAcumuladoPorFecha,
+  validarLimitePorTransaccion,
 };

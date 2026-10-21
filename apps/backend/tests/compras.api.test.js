@@ -14,7 +14,7 @@ const diasAbiertos = () => {
   }
   return abiertos;
 };
-const [FECHA, OTRA_FECHA] = diasAbiertos();
+const [FECHA] = diasAbiertos();
 
 const proximoLunes = () => {
   const d = new Date();
@@ -183,25 +183,26 @@ describe('POST /api/compras', () => {
     expect(body.error).toMatch(mensaje);
   });
 
-  test('TC-76/77/78: el límite de 10 se suma entre compras de la misma fecha', async () => {
-    const seis = Array(6).fill(adulto);
-    const cuatro = Array(4).fill(adulto);
-
-    expect((await pedir('POST', '/api/compras', compraBase({ visitantes: seis }))).status).toBe(201);
-    expect((await pedir('POST', '/api/compras', compraBase({ visitantes: cuatro }))).status).toBe(201);
-
-    const { status, body } = await pedir('POST', '/api/compras', compraBase({ visitantes: [adulto] }));
-    expect(status).toBe(400);
-    expect(body.error).toMatch(/límite de 10/);
-  });
-
-  test('TC-79: el límite se evalúa por separado en cada fecha', async () => {
+  // Respuesta del profesor: el máximo es de 10 entradas por fecha en una transacción,
+  // y se pueden hacer varias transacciones (por ejemplo, 20 entradas).
+  test('TC-76: se pueden comprar más de 10 entradas para una fecha en varias transacciones', async () => {
     const diez = Array(10).fill(adulto);
 
-    await pedir('POST', '/api/compras', compraBase({ visitantes: diez }));
-    const { status } = await pedir('POST', '/api/compras', compraBase({ visitantes: diez, fechaVisita: OTRA_FECHA }));
+    expect((await pedir('POST', '/api/compras', compraBase({ visitantes: diez }))).status).toBe(201);
+    expect((await pedir('POST', '/api/compras', compraBase({ visitantes: diez }))).status).toBe(201);
+    expect((await pedir('POST', '/api/compras', compraBase({ visitantes: [adulto] }))).status).toBe(201);
+  });
 
-    expect(status).toBe(201);
+  test('TC-77/78: el máximo de 10 se aplica a cada transacción, no a la suma de la fecha', async () => {
+    const seis = Array(6).fill(adulto);
+    const cinco = Array(5).fill(adulto);
+
+    await pedir('POST', '/api/compras', compraBase({ visitantes: seis }));
+    expect((await pedir('POST', '/api/compras', compraBase({ visitantes: cinco }))).status).toBe(201);
+
+    const { status, body } = await pedir('POST', '/api/compras', compraBase({ visitantes: Array(11).fill(adulto) }));
+    expect(status).toBe(400);
+    expect(body.error).toMatch(/no puede ser mayor a 10/);
   });
 });
 
@@ -246,18 +247,6 @@ describe('pago con tarjeta', () => {
     expect((await pedir('POST', `/api/compras/${id}/pago`, { resultado: 'quizas' })).status).toBe(400);
     await pedir('POST', `/api/compras/${id}/pago`, { resultado: 'aprobada' });
     expect((await pedir('POST', `/api/compras/${id}/pago`, { resultado: 'rechazada' })).status).toBe(409);
-  });
-
-  test('una compra rechazada libera sus entradas, pero no se puede reintentar si la fecha ya se llenó', async () => {
-    const diez = Array(10).fill(adulto);
-    const { id } = await crear({ visitantes: diez });
-    await pedir('POST', `/api/compras/${id}/pago`, { resultado: 'rechazada' });
-
-    expect((await pedir('POST', '/api/compras', compraBase({ visitantes: diez }))).status).toBe(201);
-
-    const reintento = await pedir('POST', `/api/compras/${id}/reintento`);
-    expect(reintento.status).toBe(409);
-    expect(reintento.body.error).toMatch(/límite de 10/);
   });
 
   test('una compra en efectivo no tiene pago con tarjeta', async () => {

@@ -272,7 +272,7 @@ function App() {
                     2. Cantidad de entradas requeridas
                   </label>
                   <p className="nota-campo">
-                    Máximo permitido: 10 entradas por usuario para una misma fecha.
+                    Máximo permitido: 10 entradas por transacción (podés hacer más de una compra para la misma fecha).
                   </p>
                 </div>
                 <input

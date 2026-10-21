@@ -36,7 +36,7 @@ const validarCupoDiarioGlobal = (
 };
 
 const validarLimitePorTransaccion = (cantidadEntradas) => {
-  if (cantidadEntradas === 4) {
+  if (cantidadEntradas === 4 || cantidadEntradas === 5) {
     return true;
   }
 

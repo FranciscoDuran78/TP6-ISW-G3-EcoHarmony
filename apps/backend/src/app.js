@@ -12,6 +12,10 @@ export const createApp = (opciones) => {
     res.json({ status: 'ok' });
   });
 
+  app.get('/api/calendario', (req, res) => {
+    res.json(compras.calendario());
+  });
+
   app.post('/api/compras/cotizacion', (req, res) => {
     res.json(compras.cotizar(req.body));
   });

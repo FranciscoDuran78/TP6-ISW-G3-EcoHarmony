@@ -1,29 +1,13 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   cotizarCompra,
   crearCompra,
+  obtenerCalendario,
   reintentarPago,
   resolverPago,
   validarEnBoleteria,
 } from './services/api.js';
 import './App.css';
-
-const DIAS_CALENDARIO_DEMO = [
-  { diaSemana: 'Lun', numero: 19, fechaIso: '2026-10-19', cerrado: true },
-  { diaSemana: 'Mar', numero: 20, fechaIso: '2026-10-20', cerrado: false },
-  { diaSemana: 'Mié', numero: 21, fechaIso: '2026-10-21', cerrado: false },
-  { diaSemana: 'Jue', numero: 22, fechaIso: '2026-10-22', cerrado: false },
-  { diaSemana: 'Vie', numero: 23, fechaIso: '2026-10-23', cerrado: false },
-  { diaSemana: 'Sáb', numero: 24, fechaIso: '2026-10-24', cerrado: false },
-  { diaSemana: 'Dom', numero: 25, fechaIso: '2026-10-25', cerrado: false },
-  { diaSemana: 'Lun', numero: 26, fechaIso: '2026-10-26', cerrado: true },
-  { diaSemana: 'Mar', numero: 27, fechaIso: '2026-10-27', cerrado: false },
-  { diaSemana: 'Mié', numero: 28, fechaIso: '2026-10-28', cerrado: false },
-  { diaSemana: 'Jue', numero: 29, fechaIso: '2026-10-29', cerrado: false },
-  { diaSemana: 'Vie', numero: 30, fechaIso: '2026-10-30', cerrado: false },
-  { diaSemana: 'Sáb', numero: 31, fechaIso: '2026-10-31', cerrado: false },
-  { diaSemana: 'Dom', numero: 1, fechaIso: '2026-11-01', cerrado: false },
-];
 
 // Filas de visitantes que puede mostrar el formulario (el máximo de compra lo valida el backend).
 const FILAS_MAXIMAS = 15;
@@ -46,7 +30,8 @@ const ESTADOS_COMPRA = {
 
 function App() {
   const [pasoActual, setPasoActual] = useState('FORMULARIO');
-  const [fechaVisita, setFechaVisita] = useState('2026-10-24');
+  const [calendario, setCalendario] = useState([]);
+  const [fechaVisita, setFechaVisita] = useState('');
   const [cantidadEntradas, setCantidadEntradas] = useState(3);
   const [visitantes, setVisitantes] = useState([
     { id: 1, edad: 28, tipoPase: 'VIP' },
@@ -58,6 +43,16 @@ function App() {
   const [cotizacion, setCotizacion] = useState({ visitantes: [], total: 0 });
   const [compra, setCompra] = useState(null);
   const [enviando, setEnviando] = useState(false);
+
+  // Los días abiertos los define el backend; se preselecciona el primero disponible.
+  useEffect(() => {
+    obtenerCalendario()
+      .then((dias) => {
+        setCalendario(dias);
+        setFechaVisita((actual) => actual || dias.find((dia) => !dia.cerrado)?.fechaIso || '');
+      })
+      .catch((error) => setMensajeError(error.message));
+  }, []);
 
   // El precio de cada visitante lo calcula el backend mientras se completa el formulario.
   useEffect(() => {
@@ -238,8 +233,9 @@ function App() {
                 </p>
 
                 <div className="grilla-calendario" id="selector-fecha">
-                  {DIAS_CALENDARIO_DEMO.map((item) => {
+                  {calendario.map((item, indice) => {
                     const estaSeleccionado = fechaVisita === item.fechaIso;
+                    const muestraMes = indice === 0 || item.numero === 1;
                     let claseDia = 'celda-dia';
                     if (item.cerrado) claseDia += ' dia-deshabilitado';
                     if (estaSeleccionado) claseDia += ' dia-seleccionado';
@@ -249,13 +245,16 @@ function App() {
                         key={item.fechaIso}
                         type="button"
                         disabled={item.cerrado}
+                        title={item.motivo ?? undefined}
                         className={claseDia}
                         onClick={() => {
                           setFechaVisita(item.fechaIso);
                           setMensajeError('');
                         }}
                       >
-                        <span className="nombre-dia">{item.diaSemana}</span>
+                        <span className="nombre-dia">
+                          {muestraMes ? `${item.diaSemana} · ${item.mes}` : item.diaSemana}
+                        </span>
                         <span className="numero-dia">{item.numero}</span>
                         <span className="estado-dia">
                           {item.cerrado ? 'Cerrado' : 'Abierto'}

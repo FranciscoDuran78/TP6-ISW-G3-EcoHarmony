@@ -15,6 +15,11 @@ const FORMAS_DE_PAGO = ['tarjeta', 'efectivo'];
 const RESULTADOS_DE_PAGO = ['aprobada', 'rechazada', 'cancelada'];
 const VALIDACIONES_BOLETERIA = ['aprobada', 'rechazada'];
 
+// Hoy y los 30 días siguientes: el horizonte de compra que valida validarFechaVisita.
+const DIAS_DEL_CALENDARIO = 31;
+const DIAS_DE_LA_SEMANA = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
+
 const MENSAJES = {
   FORMA_PAGO_REQUERIDA: 'Debe seleccionar una forma de pago: efectivo en boletería o tarjeta',
   FORMA_PAGO_INVALIDA: 'La forma de pago no es válida',
@@ -163,6 +168,32 @@ export const crearServicioCompras = ({
       && !['cancelada', 'rechazada'].includes(c.estado))
     .reduce((suma, c) => suma + c.cantidad, 0);
 
+  // El calendario usa el mismo validador que la compra: lo que muestra abierto, se puede comprar.
+  const calendario = () => {
+    const momento = ahora();
+
+    return Array.from({ length: DIAS_DEL_CALENDARIO }, (_, i) => {
+      const dia = new Date(momento.getFullYear(), momento.getMonth(), momento.getDate() + i);
+      const fechaIso = fechaLocal(dia);
+      let motivo = null;
+
+      try {
+        validarFechaVisita(fechaIso, i === 0 ? horaLocal(momento) : null);
+      } catch (error) {
+        motivo = error.message;
+      }
+
+      return {
+        fechaIso,
+        diaSemana: DIAS_DE_LA_SEMANA[dia.getDay()],
+        numero: dia.getDate(),
+        mes: MESES[dia.getMonth()],
+        cerrado: motivo !== null,
+        motivo,
+      };
+    });
+  };
+
   const cotizar = (cuerpo) => {
     const visitantes = (Array.isArray(cuerpo?.visitantes) ? cuerpo.visitantes : [])
       .map(normalizarVisitante)
@@ -265,6 +296,7 @@ export const crearServicioCompras = ({
   };
 
   return {
+    calendario,
     cotizar,
     crear,
     obtener: (id) => vista(obtener(id)),

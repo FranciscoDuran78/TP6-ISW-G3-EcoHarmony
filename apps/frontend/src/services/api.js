@@ -27,7 +27,9 @@ async function getApiHealth() {
   return pedir('GET', '/api/health');
 }
 
-export const cotizarCompra = (visitantes) => pedir('POST', '/api/compras/cotizacion', { visitantes });
+export const obtenerCalendario = () => pedir('GET', '/api/calendario');
+
+export const cotizarCompra =(visitantes) => pedir('POST', '/api/compras/cotizacion', { visitantes });
 
 export const crearCompra = (datos) => pedir('POST', '/api/compras', datos);
 

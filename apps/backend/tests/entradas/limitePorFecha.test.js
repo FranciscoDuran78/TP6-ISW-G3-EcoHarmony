@@ -33,7 +33,7 @@ describe('Límite de entradas por transacción', () => {
     }).toThrow('Supera el límite de 10 entradas permitidas por transacción');
   });
 
-  // [TC-79] - ETAPA GREEN
+  // [TC-79] - ETAPA REFACTOR
   test('TC-79: debería permitir 10 entradas para otra fecha aunque ya haya 10 en una fecha distinta', () => {
     const entradasPreviasFechaA = 10;
     const fechaA = '2026-11-10';

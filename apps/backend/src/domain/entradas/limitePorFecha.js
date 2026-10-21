@@ -1,4 +1,4 @@
-﻿const MAXIMO_ENTRADAS_POR_FECHA = 10;
+const MAXIMO_ENTRADAS_POR_FECHA = 10;
 const MAXIMO_ENTRADAS_POR_TRANSACCION = 10;
 
 const MENSAJES_ERROR = {
@@ -23,6 +23,14 @@ const validarLimiteAcumuladoPorFecha = (
   return true;
 };
 
+const validarLimitePorTransaccion = (cantidadEntradas) => {
+  if (cantidadEntradas > MAXIMO_ENTRADAS_POR_TRANSACCION) {
+    throw new Error(MENSAJES_ERROR.LIMITE_POR_TRANSACCION);
+  }
+
+  return true;
+};
+
 const validarCupoDiarioGlobal = (
   visitantesTotalesParqueFecha,
   cupoDiarioConfigurado = null,
@@ -35,14 +43,6 @@ const validarCupoDiarioGlobal = (
   }
 
   return typeof visitantesTotalesParqueFecha === 'number';
-};
-
-const validarLimitePorTransaccion = (cantidadEntradas) => {
-  if (cantidadEntradas > MAXIMO_ENTRADAS_POR_TRANSACCION) {
-    throw new Error(MENSAJES_ERROR.LIMITE_POR_TRANSACCION);
-  }
-
-  return true;
 };
 
 export {

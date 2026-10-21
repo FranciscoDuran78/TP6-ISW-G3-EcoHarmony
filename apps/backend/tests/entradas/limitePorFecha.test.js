@@ -26,7 +26,7 @@ describe('Límite de entradas por transacción', () => {
     expect(resultado).toBe(true);
   });
 
-  // [TC-78] - ETAPA RED
+  // [TC-78] - ETAPA GREEN
   test('TC-78: debería rechazar una transacción de 11 entradas', () => {
     expect(() => {
       validarLimitePorTransaccion(11);

@@ -35,9 +35,16 @@ const validarCupoDiarioGlobal = (
   return typeof visitantesTotalesParqueFecha === 'number';
 };
 
+const MAXIMO_ENTRADAS_POR_TRANSACCION = 10;
 const CANTIDADES_PERMITIDAS_TEMPORALES = [4, 5];
 
 const validarLimitePorTransaccion = (cantidadEntradas) => {
+  if (cantidadEntradas > MAXIMO_ENTRADAS_POR_TRANSACCION) {
+    throw new Error(
+      `Supera el límite de ${MAXIMO_ENTRADAS_POR_TRANSACCION} entradas permitidas por transacción`,
+    );
+  }
+
   if (CANTIDADES_PERMITIDAS_TEMPORALES.includes(cantidadEntradas)) {
     return true;
   }

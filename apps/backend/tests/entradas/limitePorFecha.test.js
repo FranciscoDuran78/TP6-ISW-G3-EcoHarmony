@@ -13,4 +13,16 @@ describe('Límite de entradas por transacción', () => {
 
     expect(resultado).toBe(true);
   });
+
+  // [TC-77] - ETAPA RED
+  test('TC-77: debería permitir una transacción de 5 entradas aunque el acumulado de la fecha llegue a 11', () => {
+    const comprasPreviasMismaFecha = 6;
+    const compraActual = 5;
+
+    expect(comprasPreviasMismaFecha + compraActual).toBe(11);
+
+    const resultado = validarLimitePorTransaccion(compraActual);
+
+    expect(resultado).toBe(true);
+  });
 });

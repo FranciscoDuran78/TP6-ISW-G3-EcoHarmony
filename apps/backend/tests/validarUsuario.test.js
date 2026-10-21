@@ -1,4 +1,4 @@
-import { validarUsuario } from "../src/domain/compraEntrada";
+import { validarUsuario } from "../src/domain/usuarios.js";
 
 describe("Validación de usuario para comprar entradas", () => {
   test("TC-01: debería lanzar un error cuando el usuario no es proporcionado", () => {

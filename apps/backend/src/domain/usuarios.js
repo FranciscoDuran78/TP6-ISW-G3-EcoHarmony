@@ -13,11 +13,11 @@ const validarUsuario = (usuario) => {
 
   if (
     !usuario.id ||
-    typeof usuario.id !== "string" ||
-    typeof usuario.id !== "number"
+    (typeof usuario.id !== "string" && typeof usuario.id !== "number")
   )
     throw new Error(MENSAJES_ERROR_USUARIO.ID_USUARIO_INVALIDO);
 
   return true;
 };
+
 export { validarUsuario };

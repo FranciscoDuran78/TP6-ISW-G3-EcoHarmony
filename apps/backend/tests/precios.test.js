@@ -12,4 +12,10 @@ describe("calcularPrecioEntrada", () => {
 
     expect(precio).toBe(5000);
   });
+
+  test("TC-58: aplica 50% de descuento en el límite de 15 años con pase VIP", () => {
+    const precio = calcularPrecioEntrada(15, "VIP");
+
+    expect(precio).toBe(10000);
+  });
 });

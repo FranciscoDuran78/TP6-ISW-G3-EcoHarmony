@@ -1,17 +1,12 @@
-﻿import React, { useState } from 'react';
-// El formulario reutiliza la validación ya cubierta por Jest en el backend.
-/* eslint-disable import/no-relative-packages */
+﻿import React, { useEffect, useState } from 'react';
 import {
-  MENSAJES_ERROR,
-  validarLimiteAcumuladoPorFecha,
-} from '../../backend/src/limitePorFecha.js';
-/* eslint-enable import/no-relative-packages */
+  cotizarCompra,
+  crearCompra,
+  reintentarPago,
+  resolverPago,
+  validarEnBoleteria,
+} from './services/api.js';
 import './App.css';
-
-const PRECIOS_BASE = {
-  Regular: 10000,
-  VIP: 20000,
-};
 
 const DIAS_CALENDARIO_DEMO = [
   { diaSemana: 'Lun', numero: 19, fechaIso: '2026-10-19', cerrado: true },
@@ -30,53 +25,10 @@ const DIAS_CALENDARIO_DEMO = [
   { diaSemana: 'Dom', numero: 1, fechaIso: '2026-11-01', cerrado: false },
 ];
 
-const calcularPrecioVisitante = (edad, tipoPase) => {
-  const edadNumerica = Number(edad);
-  const precioBase = PRECIOS_BASE[tipoPase] || 0;
+// Filas de visitantes que puede mostrar el formulario (el máximo de compra lo valida el backend).
+const FILAS_MAXIMAS = 15;
 
-  if (edad === '' || Number.isNaN(edadNumerica) || edadNumerica < 0) {
-    return 0;
-  }
-  if (edadNumerica <= 3) {
-    return 0;
-  }
-  if (edadNumerica <= 15 || edadNumerica >= 60) {
-    return precioBase * 0.5;
-  }
-  return precioBase;
-};
-
-const CLAVE_COMPRAS_POR_FECHA = 'ecoharmony-compras-por-fecha';
-
-const leerComprasPorFecha = () => {
-  try {
-    const guardadas = sessionStorage.getItem(CLAVE_COMPRAS_POR_FECHA);
-    return guardadas ? JSON.parse(guardadas) : {};
-  } catch {
-    return {};
-  }
-};
-
-const obtenerPreviasEnFecha = (fecha) => {
-  const compras = leerComprasPorFecha();
-  return compras[fecha] || 0;
-};
-
-const registrarCompraConfirmada = (fecha, cantidad) => {
-  const compras = leerComprasPorFecha();
-  compras[fecha] = (compras[fecha] || 0) + cantidad;
-  sessionStorage.setItem(CLAVE_COMPRAS_POR_FECHA, JSON.stringify(compras));
-};
-
-const mensajeSiExcedeLimite = (fecha, cantidad) => {
-  try {
-    validarLimiteAcumuladoPorFecha(obtenerPreviasEnFecha(fecha), cantidad);
-    return '';
-  } catch (error) {
-    return error.message || MENSAJES_ERROR.LIMITE_ACUMULADO_FECHA;
-  }
-};
-
+// Solo texto para el usuario: el precio y los descuentos los calcula el backend.
 const obtenerEtiquetaDescuento = (edad) => {
   const edadNumerica = Number(edad);
   if (edad === '' || Number.isNaN(edadNumerica)) return 'Sin calcular';
@@ -84,6 +36,12 @@ const obtenerEtiquetaDescuento = (edad) => {
   if (edadNumerica <= 15) return '50% OFF (Tarifa Menor)';
   if (edadNumerica >= 60) return '50% OFF (Tarifa Jubilado)';
   return 'Tarifa Completa';
+};
+
+const ESTADOS_COMPRA = {
+  pagada: { texto: 'CONFIRMADA', clase: 'estado-ok' },
+  validada: { texto: 'PAGO VALIDADO EN BOLETERÍA', clase: 'estado-ok' },
+  pendiente: { texto: 'PENDIENTE DE VALIDACIÓN EN BOLETERÍA', clase: 'estado-pendiente' },
 };
 
 function App() {
@@ -97,39 +55,42 @@ function App() {
   ]);
   const [formaPago, setFormaPago] = useState('TARJETA');
   const [mensajeError, setMensajeError] = useState('');
+  const [cotizacion, setCotizacion] = useState({ visitantes: [], total: 0 });
+  const [compra, setCompra] = useState(null);
+  const [enviando, setEnviando] = useState(false);
+
+  // El precio de cada visitante lo calcula el backend mientras se completa el formulario.
+  useEffect(() => {
+    let vigente = true;
+    const espera = setTimeout(() => {
+      cotizarCompra(visitantes)
+        .then((resultado) => {
+          if (vigente) setCotizacion(resultado);
+        })
+        .catch((error) => {
+          if (vigente) setMensajeError(error.message);
+        });
+    }, 250);
+
+    return () => {
+      vigente = false;
+      clearTimeout(espera);
+    };
+  }, [visitantes]);
 
   const actualizarCantidadEntradas = (nuevaCantidad) => {
     const valor = Number(nuevaCantidad);
     setCantidadEntradas(valor);
-
-    if (valor > 10) {
-      setMensajeError('La cantidad de entradas no puede ser mayor a 10 por fecha.');
-      return;
-    }
-
-    if (valor < 1) {
-      setMensajeError('La cantidad de entradas debe ser al menos 1.');
-      return;
-    }
-
-    const errorLimiteFecha = mensajeSiExcedeLimite(fechaVisita, valor);
-    if (errorLimiteFecha) {
-      setMensajeError(errorLimiteFecha);
-      return;
-    }
-
     setMensajeError('');
-    const nuevosVisitantes = [...visitantes];
 
-    if (valor > nuevosVisitantes.length) {
-      for (let i = nuevosVisitantes.length; i < valor; i += 1) {
-        nuevosVisitantes.push({ id: i + 1, edad: 25, tipoPase: 'Regular' });
-      }
-    } else {
-      nuevosVisitantes.length = valor;
+    if (!Number.isInteger(valor) || valor < 1 || valor > FILAS_MAXIMAS) {
+      return;
     }
 
-    setVisitantes(nuevosVisitantes);
+    setVisitantes((actuales) => Array.from(
+      { length: valor },
+      (_, i) => actuales[i] ?? { id: i + 1, edad: 25, tipoPase: 'Regular' },
+    ));
   };
 
   const actualizarVisitante = (indice, campo, valor) => {
@@ -141,55 +102,51 @@ function App() {
     setVisitantes(copiaVisitantes);
   };
 
-  const entradasPreviasFecha = obtenerPreviasEnFecha(fechaVisita);
-
-  const totalCompra = visitantes.reduce(
-    (acumulador, vis) => acumulador + calcularPrecioVisitante(vis.edad, vis.tipoPase),
-    0,
-  );
+  // Ejecuta una llamada al backend y refleja la compra que devuelve (o el error).
+  const ejecutar = async (accion, alExito) => {
+    setEnviando(true);
+    try {
+      const actualizada = await accion();
+      setCompra(actualizada);
+      setMensajeError('');
+      if (alExito) alExito(actualizada);
+    } catch (error) {
+      setMensajeError(error.message);
+    } finally {
+      setEnviando(false);
+    }
+  };
 
   const manejarConfirmarFormulario = (evento) => {
     evento.preventDefault();
 
-    if (!fechaVisita) {
-      setMensajeError('Debe seleccionar una fecha de visita válida.');
-      return;
-    }
-
-    if (cantidadEntradas > 10 || cantidadEntradas < 1) {
-      setMensajeError('La cantidad de entradas no puede ser mayor a 10.');
-      return;
-    }
-
-    const errorLimiteFecha = mensajeSiExcedeLimite(fechaVisita, cantidadEntradas);
-    if (errorLimiteFecha) {
-      setMensajeError(errorLimiteFecha);
-      return;
-    }
-
-    const faltaDatoVisitante = visitantes.some(
-      (vis) => vis.edad === '' || vis.edad === null || !vis.tipoPase,
+    ejecutar(
+      () => crearCompra({
+        fechaVisita,
+        cantidad: cantidadEntradas,
+        visitantes,
+        formaPago,
+      }),
+      (nueva) => setPasoActual(nueva.formaPago === 'tarjeta' ? 'MERCADO_PAGO' : 'CONFIRMACION'),
     );
-
-    if (faltaDatoVisitante) {
-      setMensajeError('Cada visitante debe indicar su edad y tipo de pase (VIP o Regular).');
-      return;
-    }
-
-    if (!formaPago) {
-      setMensajeError('Debe seleccionar una forma de pago para continuar.');
-      return;
-    }
-
-    setMensajeError('');
-
-    if (formaPago === 'TARJETA') {
-      setPasoActual('MERCADO_PAGO');
-    } else {
-      registrarCompraConfirmada(fechaVisita, cantidadEntradas);
-      setPasoActual('CONFIRMACION');
-    }
   };
+
+  const volverAlFormulario = () => {
+    setCompra(null);
+    setMensajeError('');
+    setPasoActual('FORMULARIO');
+  };
+
+  const pagoRechazado = compra?.estado === 'rechazada';
+  const puedeVerPago = compra?.formaPago === 'tarjeta';
+  const puedeVerConfirmacion = Boolean(compra) && (compra.pagada || compra.formaPago === 'efectivo');
+  const estadoCompra = ESTADOS_COMPRA[compra?.estado] ?? ESTADOS_COMPRA.pendiente;
+
+  const alertaError = mensajeError && (
+    <div className="alerta-error" role="alert">
+      <strong>⚠️ No se pudo procesar la solicitud:</strong> {mensajeError}
+    </div>
+  );
 
   return (
     <div className="ecoharmony-app">
@@ -219,16 +176,15 @@ function App() {
         </button>
         <button
           type="button"
+          disabled={!puedeVerPago}
           className={pasoActual === 'MERCADO_PAGO' ? 'btn-proto activo' : 'btn-proto'}
-          onClick={() => {
-            setFormaPago('TARJETA');
-            setPasoActual('MERCADO_PAGO');
-          }}
+          onClick={() => setPasoActual('MERCADO_PAGO')}
         >
           2. Pasarela Mercado Pago
         </button>
         <button
           type="button"
+          disabled={!puedeVerConfirmacion}
           className={pasoActual === 'CONFIRMACION' ? 'btn-proto activo' : 'btn-proto'}
           onClick={() => setPasoActual('CONFIRMACION')}
         >
@@ -268,11 +224,7 @@ function App() {
               </p>
             </div>
 
-            {mensajeError && (
-              <div className="alerta-error" role="alert">
-                <strong>⚠️ No se pudo procesar la solicitud:</strong> {mensajeError}
-              </div>
-            )}
+            {alertaError}
 
             <form onSubmit={manejarConfirmarFormulario} className="formulario-compra">
               {/* Selección de Fecha con Calendario que bloquea Lunes */}
@@ -300,7 +252,7 @@ function App() {
                         className={claseDia}
                         onClick={() => {
                           setFechaVisita(item.fechaIso);
-                          setMensajeError(mensajeSiExcedeLimite(item.fechaIso, cantidadEntradas));
+                          setMensajeError('');
                         }}
                       >
                         <span className="nombre-dia">{item.diaSemana}</span>
@@ -322,16 +274,13 @@ function App() {
                   </label>
                   <p className="nota-campo">
                     Máximo permitido: 10 entradas por usuario para una misma fecha.
-                    {entradasPreviasFecha > 0 && (
-                      <span>{` Ya compraste ${entradasPreviasFecha} para esta fecha.`}</span>
-                    )}
                   </p>
                 </div>
                 <input
                   id="input-cantidad"
                   type="number"
                   min="1"
-                  max="15"
+                  max={FILAS_MAXIMAS}
                   value={cantidadEntradas}
                   onChange={(e) => actualizarCantidadEntradas(e.target.value)}
                   className="input-numero"
@@ -349,10 +298,7 @@ function App() {
 
                 <div className="lista-visitantes">
                   {visitantes.map((visitante, index) => {
-                    const subtotal = calcularPrecioVisitante(
-                      visitante.edad,
-                      visitante.tipoPase,
-                    );
+                    const subtotal = cotizacion.visitantes[index]?.precio ?? 0;
 
                     return (
                       <div key={visitante.id} className="fila-visitante">
@@ -455,11 +401,11 @@ function App() {
                 <div className="bloque-total">
                   <span>Total a abonar ({visitantes.length} entradas):</span>
                   <strong className="precio-final">
-                    ${totalCompra.toLocaleString('es-AR')}
+                    ${cotizacion.total.toLocaleString('es-AR')}
                   </strong>
                 </div>
 
-                <button type="submit" className="btn-confirmar">
+                <button type="submit" className="btn-confirmar" disabled={enviando}>
                   {formaPago === 'TARJETA'
                     ? 'Continuar a Mercado Pago'
                     : 'Confirmar Reserva de Entradas'}
@@ -470,17 +416,25 @@ function App() {
         )}
 
         {/* PANTALLA 2: SIMULACIÓN DE PASARELA MERCADO PAGO */}
-        {pasoActual === 'MERCADO_PAGO' && (
+        {pasoActual === 'MERCADO_PAGO' && puedeVerPago && (
           <section className="tarjeta-principal vista-mp">
             <div className="banner-mp">
               <div>
                 <span className="badge-mp">Módulo Externo Simulado</span>
                 <h3>Mercado Pago · Checkout Seguro</h3>
               </div>
-              <span className="monto-mp">${totalCompra.toLocaleString('es-AR')}</span>
+              <span className="monto-mp">${compra.total.toLocaleString('es-AR')}</span>
             </div>
 
             <div className="cuerpo-mp">
+              {pagoRechazado && (
+                <div className="alerta-error" role="alert">
+                  <strong>Transacción rechazada:</strong> el pago no fue aprobado y la compra no figura
+                  como pagada. Podés reintentar.
+                </div>
+              )}
+              {alertaError}
+
               <div className="detalle-transaccion-mp">
                 <h4>Resumen de la Transacción</h4>
                 <ul>
@@ -490,11 +444,15 @@ function App() {
                   </li>
                   <li>
                     <span>Concepto:</span>
-                    <strong>{visitantes.length}x Entradas al Parque</strong>
+                    <strong>{compra.cantidad}x Entradas al Parque</strong>
                   </li>
                   <li>
                     <span>Fecha de visita:</span>
-                    <strong>{fechaVisita}</strong>
+                    <strong>{compra.fechaVisita}</strong>
+                  </li>
+                  <li>
+                    <span>Intento de pago:</span>
+                    <strong>#{compra.intentos.length}</strong>
                   </li>
                   <li>
                     <span>Comprador:</span>
@@ -525,42 +483,61 @@ function App() {
                       id="cuotas-tarjeta"
                       type="text"
                       readOnly
-                      value={`1 cuota de $${totalCompra.toLocaleString('es-AR')}`}
+                      value={`1 cuota de $${compra.total.toLocaleString('es-AR')}`}
                     />
                   </div>
                 </div>
               </div>
 
               <div className="acciones-mp">
-                <button
-                  type="button"
-                  className="btn-cancelar"
-                  onClick={() => {
-                    setPasoActual('FORMULARIO');
-                    setMensajeError(
-                      'Transacción cancelada: El pago con tarjeta fue rechazado o abandonado.',
-                    );
-                  }}
-                >
-                  Simular Rechazo / Volver
-                </button>
-                <button
-                  type="button"
-                  className="btn-confirmar"
-                  onClick={() => {
-                    registrarCompraConfirmada(fechaVisita, cantidadEntradas);
-                    setPasoActual('CONFIRMACION');
-                  }}
-                >
-                  Pagar ${totalCompra.toLocaleString('es-AR')} y Confirmar
-                </button>
+                {pagoRechazado ? (
+                  <>
+                    <button
+                      type="button"
+                      className="btn-cancelar"
+                      onClick={volverAlFormulario}
+                    >
+                      Volver al formulario
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-confirmar"
+                      disabled={enviando}
+                      onClick={() => ejecutar(() => reintentarPago(compra.id))}
+                    >
+                      Reintentar pago
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      className="btn-cancelar"
+                      disabled={enviando}
+                      onClick={() => ejecutar(() => resolverPago(compra.id, 'rechazada'))}
+                    >
+                      Simular Rechazo
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-confirmar"
+                      disabled={enviando}
+                      onClick={() => ejecutar(
+                        () => resolverPago(compra.id, 'aprobada'),
+                        () => setPasoActual('CONFIRMACION'),
+                      )}
+                    >
+                      Pagar ${compra.total.toLocaleString('es-AR')} y Confirmar
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </section>
         )}
 
         {/* PANTALLA 3: RESUMEN DE COMPRA Y SIMULACIÓN DE EMAIL CON ADJUNTO */}
-        {pasoActual === 'CONFIRMACION' && (
+        {pasoActual === 'CONFIRMACION' && puedeVerConfirmacion && (
           <div className="contenedor-confirmacion">
             <section className="tarjeta-principal resumen-exito">
               <div className="icono-exito">✓</div>
@@ -569,114 +546,148 @@ function App() {
                 Se procesó tu solicitud para visitar <strong>EcoHarmony Park</strong>.
               </p>
 
+              {alertaError}
+
               <div className="grilla-datos-finales">
                 <div className="dato-final">
                   <span>Cantidad de entradas compradas</span>
-                  <strong>{visitantes.length} entradas</strong>
+                  <strong>{compra.resumen.cantidadEntradas} entradas</strong>
                 </div>
                 <div className="dato-final">
                   <span>Fecha de visita</span>
-                  <strong>{fechaVisita}</strong>
+                  <strong>{compra.resumen.fecha}</strong>
                 </div>
                 <div className="dato-final">
                   <span>Medio de pago</span>
                   <strong>
-                    {formaPago === 'TARJETA'
+                    {compra.formaPago === 'tarjeta'
                       ? 'Tarjeta de Crédito (Mercado Pago)'
                       : 'Efectivo en Boletería'}
                   </strong>
                 </div>
                 <div className="dato-final">
                   <span>Estado de la compra</span>
-                  <strong className={formaPago === 'TARJETA' ? 'estado-ok' : 'estado-pendiente'}>
-                    {formaPago === 'TARJETA'
-                      ? 'CONFIRMADA'
-                      : 'PENDIENTE DE VALIDACIÓN EN BOLETERÍA'}
-                  </strong>
-                </div>
-              </div>
-            </section>
-
-            {/* Simulación de Cliente de Correo Electrónico */}
-            <section className="tarjeta-principal cliente-email">
-              <div className="cabecera-ventana-mail">
-                <span>📧 Simulación de Envío de Correo de Confirmación</span>
-                <span className="tag-orden">Orden #EH-2026-0849</span>
-              </div>
-
-              <div className="metadatos-mail">
-                <p>
-                  <strong>De:</strong> reservas@ecoharmonypark.com.ar
-                </p>
-                <p>
-                  <strong>Para:</strong> visitante@ecoharmony.com.ar
-                </p>
-                <p>
-                  <strong>Asunto:</strong> Confirmación de compra de entradas - Visita {fechaVisita}
-                </p>
-              </div>
-
-              <div className="cuerpo-mail">
-                <p>Hola <strong>Bruno</strong>,</p>
-                <p>
-                  Te enviamos el resumen representativo de tu transacción para ingresar a
-                  <strong> EcoHarmony Park</strong> el día <strong>{fechaVisita}</strong>:
-                </p>
-
-                <table className="tabla-mail">
-                  <thead>
-                    <tr>
-                      <th>Visitante</th>
-                      <th>Edad</th>
-                      <th>Tipo de Pase</th>
-                      <th>Bonificación</th>
-                      <th>Subtotal</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {visitantes.map((vis, idx) => (
-                      <tr key={vis.id}>
-                        <td>Visitante #{idx + 1}</td>
-                        <td>{vis.edad} años</td>
-                        <td>{vis.tipoPase}</td>
-                        <td>{obtenerEtiquetaDescuento(vis.edad)}</td>
-                        <td>
-                          ${calcularPrecioVisitante(vis.edad, vis.tipoPase).toLocaleString('es-AR')}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                  <tfoot>
-                    <tr>
-                      <td colSpan="4"><strong>TOTAL DE LA TRANSACCIÓN</strong></td>
-                      <td><strong>${totalCompra.toLocaleString('es-AR')}</strong></td>
-                    </tr>
-                  </tfoot>
-                </table>
-
-                {/* Archivo Adjunto requerido por el PO */}
-                <div className="caja-adjunto">
-                  <div className="icono-pdf">📄</div>
-                  <div className="info-adjunto">
-                    <strong>Comprobante_Entradas_EcoHarmony_EH0849.pdf</strong>
-                    <span>Archivo PDF adjunto · Incluye {visitantes.length} códigos QR de acceso (245 KB)</span>
-                  </div>
-                  <button type="button" className="btn-descargar">
-                    Descargar Adjunto
-                  </button>
+                  <strong className={estadoCompra.clase}>{estadoCompra.texto}</strong>
                 </div>
               </div>
 
-              <div className="pie-confirmacion">
+              {compra.formaPago === 'efectivo' && compra.estado === 'pendiente' && (
                 <button
                   type="button"
                   className="btn-secundario"
-                  onClick={() => setPasoActual('FORMULARIO')}
+                  disabled={enviando}
+                  onClick={() => ejecutar(() => validarEnBoleteria(compra.id))}
                 >
-                  ← Realizar una nueva compra
+                  Simular validación del pago en boletería
                 </button>
-              </div>
+              )}
             </section>
+
+            {/* Simulación de Cliente de Correo Electrónico */}
+            {compra.correo ? (
+              <section className="tarjeta-principal cliente-email">
+                <div className="cabecera-ventana-mail">
+                  <span>📧 Simulación de Envío de Correo de Confirmación</span>
+                  <span className="tag-orden">
+                    Orden #EH-2026-{String(compra.id).padStart(4, '0')}
+                  </span>
+                </div>
+
+                <div className="metadatos-mail">
+                  <p>
+                    <strong>De:</strong> reservas@ecoharmonypark.com.ar
+                  </p>
+                  <p>
+                    <strong>Para:</strong> {compra.correo.destinatario}
+                  </p>
+                  <p>
+                    <strong>Asunto:</strong> Confirmación de compra de entradas - Visita {compra.correo.fecha}
+                  </p>
+                </div>
+
+                <div className="cuerpo-mail">
+                  <p>Hola <strong>Bruno</strong>,</p>
+                  <p>
+                    Te enviamos el resumen representativo de tu transacción para ingresar a
+                    <strong> EcoHarmony Park</strong> el día <strong>{compra.correo.fecha}</strong>:
+                  </p>
+
+                  <table className="tabla-mail">
+                    <thead>
+                      <tr>
+                        <th>Visitante</th>
+                        <th>Edad</th>
+                        <th>Tipo de Pase</th>
+                        <th>Bonificación</th>
+                        <th>Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {compra.correo.pases.map((vis, idx) => (
+                        // eslint-disable-next-line react/no-array-index-key -- los pases no tienen id propio
+                        <tr key={idx}>
+                          <td>Visitante #{idx + 1}</td>
+                          <td>{vis.edad} años</td>
+                          <td>{vis.tipoPase}</td>
+                          <td>{obtenerEtiquetaDescuento(vis.edad)}</td>
+                          <td>${vis.precio.toLocaleString('es-AR')}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                    <tfoot>
+                      <tr>
+                        <td colSpan="4"><strong>TOTAL DE LA TRANSACCIÓN</strong></td>
+                        <td><strong>${compra.total.toLocaleString('es-AR')}</strong></td>
+                      </tr>
+                    </tfoot>
+                  </table>
+
+                  {/* Archivo Adjunto requerido por el PO */}
+                  <div className="caja-adjunto">
+                    <div className="icono-pdf">📄</div>
+                    <div className="info-adjunto">
+                      <strong>{compra.correo.adjunto}</strong>
+                      <span>
+                        Archivo PDF adjunto · Incluye {compra.correo.cantidad} códigos QR de acceso
+                      </span>
+                    </div>
+                    <button type="button" className="btn-descargar">
+                      Descargar Adjunto
+                    </button>
+                  </div>
+                </div>
+
+                <div className="pie-confirmacion">
+                  <button
+                    type="button"
+                    className="btn-secundario"
+                    onClick={volverAlFormulario}
+                  >
+                    ← Realizar una nueva compra
+                  </button>
+                </div>
+              </section>
+            ) : (
+              <section className="tarjeta-principal cliente-email">
+                <div className="cuerpo-mail">
+                  <p>
+                    {compra.errorCorreo
+                      ? `La compra está confirmada, pero no se pudo enviar el correo: ${compra.errorCorreo}`
+                      : 'El correo de confirmación se envía cuando se valida el pago en boletería.'}
+                  </p>
+                </div>
+
+                <div className="pie-confirmacion">
+                  <button
+                    type="button"
+                    className="btn-secundario"
+                    onClick={volverAlFormulario}
+                  >
+                    ← Realizar una nueva compra
+                  </button>
+                </div>
+              </section>
+            )}
           </div>
         )}
       </main>

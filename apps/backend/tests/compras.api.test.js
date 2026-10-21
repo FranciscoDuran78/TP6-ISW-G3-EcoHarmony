@@ -198,6 +198,18 @@ describe('pago con tarjeta', () => {
     expect((await pedir('POST', `/api/compras/${id}/pago`, { resultado: 'rechazada' })).status).toBe(409);
   });
 
+  test('una compra rechazada libera sus entradas, pero no se puede reintentar si la fecha ya se llenó', async () => {
+    const diez = Array(10).fill(adulto);
+    const { id } = await crear({ visitantes: diez });
+    await pedir('POST', `/api/compras/${id}/pago`, { resultado: 'rechazada' });
+
+    expect((await pedir('POST', '/api/compras', compraBase({ visitantes: diez }))).status).toBe(201);
+
+    const reintento = await pedir('POST', `/api/compras/${id}/reintento`);
+    expect(reintento.status).toBe(409);
+    expect(reintento.body.error).toMatch(/límite de 10/);
+  });
+
   test('una compra en efectivo no tiene pago con tarjeta', async () => {
     const { id } = await crear({ formaPago: 'efectivo' });
 

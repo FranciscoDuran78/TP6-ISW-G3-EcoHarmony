@@ -157,10 +157,10 @@ export const crearServicioCompras = ({
     }
   };
 
-  // ponytail: cuenta toda compra no cancelada; si el grupo define otra regla, se cambia acá.
+  // ponytail: una compra rechazada o cancelada libera sus entradas; el reintento lo revalida.
   const entradasPreviasEnFecha = (fechaVisita) => [...compras.values()]
     .filter((c) => c.usuarioId === usuario.id && c.fechaVisita === fechaVisita
-      && c.estado !== 'cancelada')
+      && !['cancelada', 'rechazada'].includes(c.estado))
     .reduce((suma, c) => suma + c.cantidad, 0);
 
   const cotizar = (cuerpo) => {
@@ -232,6 +232,9 @@ export const crearServicioCompras = ({
     const compra = obtener(id);
 
     try {
+      if (['cancelada', 'rechazada'].includes(compra.estado)) {
+        validarLimiteAcumuladoPorFecha(entradasPreviasEnFecha(compra.fechaVisita), compra.cantidad);
+      }
       pagos.reintentarPago(compra);
     } catch (error) {
       throw new ErrorCompra(409, error.message);

@@ -1,11 +1,8 @@
-import { MENSAJES_ERROR as MENSAJES_ERROR_LIMITE } from './limitePorFecha.js';
-
 const MAXIMO_ENTRADAS_POR_COMPRA = 10;
 
 const MENSAJES_ERROR = {
   CANTIDAD_NO_ENTERA: 'La cantidad de entradas debe ser un número entero',
   DISCREPANCIA_VISITANTES: 'La cantidad de entradas no coincide con los visitantes ingresados',
-  ...MENSAJES_ERROR_LIMITE,
   EDAD_NO_VALIDA: 'La edad no es válida',
   ENTRADAS_VACIAS: 'La compra debe incluir entradas',
   FECHA_UNICA_REQUERIDA: 'Todas las entradas deben tener la misma fecha de visita',

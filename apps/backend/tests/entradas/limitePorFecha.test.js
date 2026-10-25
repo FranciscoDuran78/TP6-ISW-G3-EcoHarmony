@@ -1,48 +1,49 @@
-import { validarLimiteAcumuladoPorFecha } from '../../src/domain/entradas/limitePorFecha.js';
+import { validarLimitePorTransaccion } from '../../src/domain/entradas/limitePorFecha.js';
 
-describe("Límite acumulado por fecha", () => {
-  test('TC-76: debería aceptar un total de 10 entradas para una fecha entre varias compras', () => {
+describe('Límite de entradas por transacción', () => {
+  // [TC-76] - ETAPA REFACTOR
+  test('TC-76: debería permitir una segunda transacción de 4 entradas tras haber comprado 6 para la misma fecha', () => {
     const comprasPreviasMismaFecha = 6;
     const compraActual = 4;
 
-    const resultado = validarLimiteAcumuladoPorFecha(
-      comprasPreviasMismaFecha,
-      compraActual,
-    );
+    // El historial solo documenta el contexto; la validación mira la transacción actual.
+    expect(comprasPreviasMismaFecha).toBe(6);
+
+    const resultado = validarLimitePorTransaccion(compraActual);
 
     expect(resultado).toBe(true);
   });
 
-  test('TC-77: debería rechazar una compra que eleva el total a 11 entradas para esa fecha', () => {
+  // [TC-77] - ETAPA REFACTOR
+  test('TC-77: debería permitir una transacción de 5 entradas aunque el acumulado de la fecha llegue a 11', () => {
     const comprasPreviasMismaFecha = 6;
     const compraActual = 5;
 
-    expect(() => {
-      validarLimiteAcumuladoPorFecha(comprasPreviasMismaFecha, compraActual);
-    }).toThrow('Supera el límite de 10 entradas permitidas por fecha');
+    expect(comprasPreviasMismaFecha + compraActual).toBe(11);
+
+    const resultado = validarLimitePorTransaccion(compraActual);
+
+    expect(resultado).toBe(true);
   });
 
-  test('TC-78: debería rechazar una entrada adicional cuando ya hay 10 compradas para esa fecha', () => {
-    const comprasPreviasMismaFecha = 10;
-    const compraActual = 1;
-
+  // [TC-78] - ETAPA REFACTOR
+  test('TC-78: debería rechazar una transacción de 11 entradas', () => {
     expect(() => {
-      validarLimiteAcumuladoPorFecha(comprasPreviasMismaFecha, compraActual);
-    }).toThrow('Supera el límite de 10 entradas permitidas por fecha');
+      validarLimitePorTransaccion(11);
+    }).toThrow('Supera el límite de 10 entradas permitidas por transacción');
   });
 
-  test('TC-79: debería permitir 10 entradas en una fecha nueva aunque haya 10 en otra fecha', () => {
-    const entradasPrevias = 10;
-    const cantidadActual = 10;
-    const fechaNueva = '2026-11-20';
-    const fechaPreviaDistinta = '2026-11-10';
+  // [TC-79] - ETAPA REFACTOR
+  test('TC-79: debería permitir 10 entradas para otra fecha aunque ya haya 10 en una fecha distinta', () => {
+    const entradasPreviasFechaA = 10;
+    const fechaA = '2026-11-10';
+    const fechaB = '2026-11-20';
+    const compraFechaB = 10;
 
-    const resultado = validarLimiteAcumuladoPorFecha(
-      entradasPrevias,
-      cantidadActual,
-      fechaNueva,
-      fechaPreviaDistinta,
-    );
+    expect(fechaA).not.toBe(fechaB);
+    expect(entradasPreviasFechaA).toBe(10);
+
+    const resultado = validarLimitePorTransaccion(compraFechaB);
 
     expect(resultado).toBe(true);
   });

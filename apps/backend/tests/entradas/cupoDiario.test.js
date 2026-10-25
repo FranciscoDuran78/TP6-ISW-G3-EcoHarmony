@@ -1,17 +1,17 @@
-import { validarCupoDiarioGlobal, validarLimiteAcumuladoPorFecha } from '../../src/domain/entradas/limitePorFecha.js';
+import { validarCompraSinCupoDiario } from '../../src/domain/entradas/limitePorFecha.js';
 
-describe("Cupo diario del parque", () => {
-  test('TC-80: debería aceptar una compra válida cuando no hay cupo diario configurado', () => {
-    const visitantesTotalesParqueFecha = 500;
-    const cupoDiarioConfigurado = null;
-    const compraValida = validarLimiteAcumuladoPorFecha(0, 4);
+describe('Cupo diario del parque', () => {
+  // [TC-80] - ETAPA REFACTOR
+  test('TC-80: debería permitir comprar 10 entradas aunque ya existan 150 vendidas ese día', () => {
+    const visitantesTotalesParqueFecha = 150;
+    const compraActual = 10;
 
-    const resultado = validarCupoDiarioGlobal(
+    const totalTrasCompra = validarCompraSinCupoDiario(
       visitantesTotalesParqueFecha,
-      cupoDiarioConfigurado,
+      compraActual,
+      null,
     );
 
-    expect(compraValida).toBe(true);
-    expect(resultado).toBe(true);
+    expect(totalTrasCompra).toBe(160);
   });
 });

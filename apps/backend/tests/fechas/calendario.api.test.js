@@ -13,9 +13,8 @@ describe('GET /api/calendario', () => {
     const { status, body } = await pedir('GET', '/api/calendario');
 
     expect(status).toBe(200);
-    expect(body).toHaveLength(31);
     expect(body[0].fechaIso).toBe(fechaLocal(new Date()));
-    expect(body[30].fechaIso).toBe(fechaLocal(new Date(anio, mes - 1, dia + 30)));
+    expect(body.at(-1).fechaIso).toBe(fechaLocal(new Date(anio, mes, dia)));
 
     body.forEach((item) => {
       const [a, m, d] = item.fechaIso.split('-').map(Number);

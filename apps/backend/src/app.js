@@ -1,5 +1,6 @@
 import express from 'express';
 import { crearServicioCompras } from './domain/compras/servicioCompras.js';
+import { HORARIO_PARQUE } from './domain/fechas/validarFecha.js';
 
 // createApp recibe las dependencias (reloj, mail, usuario) para poder probarlas.
 export const createApp = (opciones) => {
@@ -10,6 +11,10 @@ export const createApp = (opciones) => {
 
   app.get('/api/health', (req, res) => {
     res.json({ status: 'ok' });
+  });
+
+  app.get('/api/horario', (req, res) => {
+    res.json(HORARIO_PARQUE);
   });
 
   app.get('/api/calendario', (req, res) => {

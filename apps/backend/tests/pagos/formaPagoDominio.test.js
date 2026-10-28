@@ -28,3 +28,12 @@ describe('Compra en efectivo en el dominio de pagos', () => {
     expect(compra).toMatchObject({ estado: 'pendiente', pagada: false });
   });
 });
+
+describe('Compra con tarjeta en el dominio de pagos', () => {
+  test('TC-38: una compra con tarjeta continúa al flujo simulado de Mercado Pago', () => {
+    const compra = pagos.crearCompra({ formaPago: 'tarjeta' });
+
+    expect(compra.intentos).toEqual([{ numero: 1, estado: 'pendiente' }]);
+    expect(pagos.renderPago(compra)).toContain('Mercado Pago');
+  });
+});

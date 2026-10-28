@@ -72,6 +72,13 @@ const validarFeriado = (fechaVisita, feriados = []) => {
   }
 };
 
+// ponytail: setMonth desborda en fin de mes (31/01 -> 03/03); acotar al último día del mes si el grupo lo pide.
+const calcularLimiteAnticipacion = (hoy) => {
+  const limite = new Date(hoy);
+  limite.setMonth(limite.getMonth() + 1);
+  return limite;
+};
+
 const validarRangoFechaVisita = (fechaObj) => {
   const ahora = new Date();
   const hoy = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate());
@@ -79,11 +86,8 @@ const validarRangoFechaVisita = (fechaObj) => {
   if (fechaObj < hoy) {
     throw new Error(MENSAJES_ERROR_FECHA.FECHA_PASADA);
   }
-    
-  const limiteMaximo = new Date(hoy);
-  limiteMaximo.setDate(limiteMaximo.getDate() + 30);
-  
-  if (fechaObj > limiteMaximo) {
+
+  if (fechaObj > calcularLimiteAnticipacion(hoy)) {
     throw new Error(MENSAJES_ERROR_FECHA.HORIZONTE_SUPERADO);
   }
 };
@@ -107,4 +111,4 @@ const validarFechaVisita = (fechaVisita, horaCompraActual = null, parqueAbierto 
   return true;
 };
 
-export { MENSAJES_ERROR_FECHA, validarFechaVisita };
+export { MENSAJES_ERROR_FECHA, calcularLimiteAnticipacion, validarFechaVisita };

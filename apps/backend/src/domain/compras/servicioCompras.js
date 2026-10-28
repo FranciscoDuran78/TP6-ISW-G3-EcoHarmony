@@ -5,14 +5,13 @@ import { validarCantidadEntradas } from '../entradas/validarCantidadEntradas.js'
 import { validarEstructuraVisitantes } from '../visitantes/validarEstructuraVisitantes.js';
 import { calcularTotalCompra } from '../precios/comprarEntradas.js';
 import pagos from '../pagos/pagos.cjs';
-import { validarFechaVisita } from '../fechas/validarFecha.js';
+import { calcularLimiteAnticipacion, validarFechaVisita } from '../fechas/validarFecha.js';
 
 const FORMAS_DE_PAGO = ['tarjeta', 'efectivo'];
 const RESULTADOS_DE_PAGO = ['aprobada', 'rechazada', 'cancelada'];
 const VALIDACIONES_BOLETERIA = ['aprobada', 'rechazada'];
 
-// Hoy y los 30 días siguientes: el horizonte de compra que valida validarFechaVisita.
-const DIAS_DEL_CALENDARIO = 31;
+const MS_POR_DIA = 24 * 60 * 60 * 1000;
 const DIAS_DE_LA_SEMANA = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
@@ -161,8 +160,11 @@ export const crearServicioCompras = ({
   // El calendario usa el mismo validador que la compra: lo que muestra abierto, se puede comprar.
   const calendario = () => {
     const momento = ahora();
+    // Hoy y los días siguientes hasta el horizonte de compra que valida validarFechaVisita.
+    const hoy = new Date(momento.getFullYear(), momento.getMonth(), momento.getDate());
+    const dias = Math.round((calcularLimiteAnticipacion(hoy) - hoy) / MS_POR_DIA) + 1;
 
-    return Array.from({ length: DIAS_DEL_CALENDARIO }, (_, i) => {
+    return Array.from({ length: dias }, (_, i) => {
       const dia = new Date(momento.getFullYear(), momento.getMonth(), momento.getDate() + i);
       const fechaIso = fechaLocal(dia);
       let motivo = null;

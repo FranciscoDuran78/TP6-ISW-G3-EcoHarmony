@@ -16,14 +16,37 @@ const MENSAJE_POR_ESTADO = Object.freeze({
   [ESTADOS.CANCELADA]: "Transacción cancelada",
 });
 
+const FORMAS_DE_PAGO = ["tarjeta", "efectivo"];
+const MENSAJES = Object.freeze({
+  FORMA_PAGO_REQUERIDA:
+    "Debe seleccionar una forma de pago: efectivo en boletería o tarjeta",
+  FORMA_PAGO_INVALIDA: "La forma de pago no es válida",
+});
+
+function validarFormaPago(formaPago) {
+  if (!formaPago) {
+    throw new Error(MENSAJES.FORMA_PAGO_REQUERIDA);
+  }
+
+  const normalizada = String(formaPago).toLowerCase();
+
+  if (!FORMAS_DE_PAGO.includes(normalizada)) {
+    throw new Error(MENSAJES.FORMA_PAGO_INVALIDA);
+  }
+
+  return normalizada;
+}
+
 function crearCompra({ formaPago, compraValida = true }) {
+  const formaPagoValida = validarFormaPago(formaPago);
+
   return {
-    formaPago,
+    formaPago: formaPagoValida,
     compraValida,
     estado: ESTADOS.PENDIENTE,
     pagada: false,
     intentos:
-      formaPago === "tarjeta" && compraValida
+      formaPagoValida === "tarjeta" && compraValida
         ? [crearIntento(1)]
         : [],
   };
@@ -132,5 +155,6 @@ exports.resolverTransaccion = resolverTransaccion;
 exports.renderPago = renderPago;
 
 exports.crearCompra = crearCompra;
+exports.validarFormaPago = validarFormaPago;
 exports.confirmarPagoBoleteria = confirmarPagoBoleteria;
 

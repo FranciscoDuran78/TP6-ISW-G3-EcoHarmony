@@ -9,13 +9,19 @@ describe("Anticipación de la compra", () => {
     expect(validarFechaVisita('2026-11-28')).toBe(true);
   });
 
-  test("TC-32: rechazar una fecha que supera el horizonte de 1 mes", () => {
-    const fechaLejana = new Date();
-    fechaLejana.setDate(fechaLejana.getDate() + 35);
-    const fechaStr = fechaLejana.toISOString().split('T')[0];
-
+  test("TC-32: rechazar una visita a un mes y un día", () => {
     expect(() => {
-      validarFechaVisita(fechaStr);
+      validarFechaVisita('2026-11-29');
     }).toThrow('La fecha supera el horizonte máximo de compra permitido (1 mes)');
+  });
+
+  test("TC-33: permitir comprar para hoy a las 17:30", () => {
+    expect(validarFechaVisita('2026-10-28', '17:30')).toBe(true);
+  });
+
+  test("TC-34: rechazar comprar para hoy a las 17:31", () => {
+    expect(() => {
+      validarFechaVisita('2026-10-28', '17:31');
+    }).toThrow('No se pueden realizar compras para el mismo día después de las 17:30');
   });
 });

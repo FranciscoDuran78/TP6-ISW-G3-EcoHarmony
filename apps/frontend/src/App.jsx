@@ -145,48 +145,6 @@ function App() {
 
   return (
     <div className="ecoharmony-app">
-      {/* Barra auxiliar para navegar rápido entre vistas y sacar capturas */}
-      <div className="barra-prototipo">
-        <span>🛠️ Vista de Prototipo PO:</span>
-        <button
-          type="button"
-          className={pasoActual === 'FORMULARIO' ? 'btn-proto activo' : 'btn-proto'}
-          onClick={() => {
-            setMensajeError('');
-            setPasoActual('FORMULARIO');
-          }}
-        >
-          1. Formulario de Compra
-        </button>
-        <button
-          type="button"
-          className="btn-proto alerta"
-          onClick={() => {
-            setPasoActual('FORMULARIO');
-            setFormaPago('');
-            setMensajeError('Error: Debe seleccionar una forma de pago (Efectivo o Tarjeta).');
-          }}
-        >
-          1b. Ver Estado de Error
-        </button>
-        <button
-          type="button"
-          disabled={!puedeVerPago}
-          className={pasoActual === 'MERCADO_PAGO' ? 'btn-proto activo' : 'btn-proto'}
-          onClick={() => setPasoActual('MERCADO_PAGO')}
-        >
-          2. Pasarela Mercado Pago
-        </button>
-        <button
-          type="button"
-          disabled={!puedeVerConfirmacion}
-          className={pasoActual === 'CONFIRMACION' ? 'btn-proto activo' : 'btn-proto'}
-          onClick={() => setPasoActual('CONFIRMACION')}
-        >
-          3. Confirmación + Email Adjunto
-        </button>
-      </div>
-
       {/* Cabecera Oficial con Logo Propuesto y Sesión Mockeada */}
       <header className="header-parque">
         <div className="contenedor-header">

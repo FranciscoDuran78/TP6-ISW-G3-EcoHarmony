@@ -7,7 +7,6 @@ import { calcularTotalCompra } from '../precios/comprarEntradas.js';
 import pagos from '../pagos/pagos.cjs';
 import { calcularLimiteAnticipacion, validarFechaVisita } from '../fechas/validarFecha.js';
 
-const FORMAS_DE_PAGO = ['tarjeta', 'efectivo'];
 const RESULTADOS_DE_PAGO = ['aprobada', 'rechazada', 'cancelada'];
 const VALIDACIONES_BOLETERIA = ['aprobada', 'rechazada'];
 
@@ -16,8 +15,6 @@ const DIAS_DE_LA_SEMANA = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
 const MESES = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
 
 const MENSAJES = {
-  FORMA_PAGO_REQUERIDA: 'Debe seleccionar una forma de pago: efectivo en boletería o tarjeta',
-  FORMA_PAGO_INVALIDA: 'La forma de pago no es válida',
   CANTIDAD_MINIMA: 'La cantidad de entradas debe ser al menos 1',
   COMPRA_INEXISTENTE: 'La compra no existe',
   RESULTADO_INVALIDO: 'Resultado no soportado',
@@ -69,20 +66,6 @@ const normalizarVisitante = (visitante) => {
 const normalizarVisitantes = (visitantes) => (
   Array.isArray(visitantes) ? visitantes.map(normalizarVisitante) : visitantes
 );
-
-const validarFormaPago = (formaPago) => {
-  if (!formaPago) {
-    throw new Error(MENSAJES.FORMA_PAGO_REQUERIDA);
-  }
-
-  const normalizada = String(formaPago).toLowerCase();
-
-  if (!FORMAS_DE_PAGO.includes(normalizada)) {
-    throw new Error(MENSAJES.FORMA_PAGO_INVALIDA);
-  }
-
-  return normalizada;
-};
 
 const precioOError = (visitante) => {
   try {
@@ -213,7 +196,7 @@ export const crearServicioCompras = ({
       // El máximo de 10 es por transacción (validarCantidadEntradas): se pueden hacer varias por fecha.
       const conPrecio = calcularPreciosVisitantes(visitantes);
 
-      return { formaPagoValida: validarFormaPago(formaPago), visitantesConPrecio: conPrecio };
+      return { formaPagoValida: pagos.validarFormaPago(formaPago), visitantesConPrecio: conPrecio };
     });
 
     ultimoId += 1;

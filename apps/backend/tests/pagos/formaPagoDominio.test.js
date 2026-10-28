@@ -11,3 +11,20 @@ describe('Forma de pago en el dominio de pagos', () => {
     expect(() => pagos.crearCompra({ formaPago: 'transferencia' })).toThrow('La forma de pago no es válida');
   });
 });
+
+describe('Compra en efectivo en el dominio de pagos', () => {
+  test('TC-37: una compra en efectivo se acepta y queda pendiente hasta validarse', () => {
+    const compra = pagos.crearCompra({ formaPago: 'efectivo' });
+
+    expect(compra).toMatchObject({ formaPago: 'efectivo', estado: 'pendiente', pagada: false });
+    expect(compra.intentos).toEqual([]);
+  });
+
+  test('TC-40: si la boletería rechaza el pago en efectivo, la compra sigue pendiente', () => {
+    const compra = pagos.crearCompra({ formaPago: 'efectivo' });
+
+    pagos.confirmarPagoBoleteria(compra, 'rechazada');
+
+    expect(compra).toMatchObject({ estado: 'pendiente', pagada: false });
+  });
+});

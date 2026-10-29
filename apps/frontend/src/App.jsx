@@ -10,7 +10,7 @@ import {
 import './App.css';
 
 // Filas de visitantes que puede mostrar el formulario (el máximo de compra lo valida el backend).
-const FILAS_MAXIMAS = 15;
+const FILAS_MAXIMAS = 10;
 
 // Solo texto para el usuario: el precio y los descuentos los calcula el backend.
 const obtenerEtiquetaDescuento = (edad) => {

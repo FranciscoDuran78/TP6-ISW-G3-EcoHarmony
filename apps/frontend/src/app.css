@@ -440,7 +440,14 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   margin-bottom: 22px;
+}
+
+.banner-mp > div,
+.campo-mp,
+.dato-final {
+  min-width: 0;
 }
 
 .badge-mp {
@@ -474,8 +481,14 @@ body {
 .detalle-transaccion-mp li {
   display: flex;
   justify-content: space-between;
+  gap: 12px;
   padding: 6px 0;
   border-bottom: 1px dashed var(--verde-medio);
+}
+
+.detalle-transaccion-mp li strong {
+  overflow-wrap: anywhere;
+  text-align: right;
 }
 
 .simulador-tarjeta-mp {
@@ -498,6 +511,8 @@ body {
 }
 
 .campo-mp input {
+  width: 100%;
+  min-width: 0;
   padding: 10px;
   border: 1px solid var(--gris-borde);
   border-radius: 6px;
@@ -515,7 +530,13 @@ body {
 .acciones-mp {
   display: flex;
   justify-content: space-between;
+  align-items: stretch;
   gap: 12px;
+}
+
+.acciones-mp > button {
+  flex: 1;
+  min-width: 0;
 }
 
 /* Vista de Confirmación y Simulación de Email */
@@ -527,6 +548,16 @@ body {
 
 .resumen-exito {
   text-align: center;
+}
+
+.resumen-exito h2 {
+  font-size: clamp(1.35rem, 4vw, 1.8rem);
+  overflow-wrap: anywhere;
+}
+
+.resumen-exito > p {
+  max-width: 60ch;
+  margin: 8px auto 0;
 }
 
 .icono-exito {
@@ -558,6 +589,10 @@ body {
   border-left: 4px solid var(--verde-oscuro);
 }
 
+.dato-final strong {
+  overflow-wrap: anywhere;
+}
+
 .dato-final span {
   display: block;
   font-size: 0.8rem;
@@ -580,7 +615,14 @@ body {
   border-radius: 8px 8px 0 0;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 12px;
   font-weight: 700;
+}
+
+.cabecera-ventana-mail > span:first-child {
+  flex: 1 1 240px;
 }
 
 .tag-orden {
@@ -596,6 +638,11 @@ body {
   padding: 14px 18px;
   border-bottom: 1px solid var(--verde-medio);
   font-size: 0.9rem;
+}
+
+.metadatos-mail p,
+.info-adjunto {
+  overflow-wrap: anywhere;
 }
 
 .cuerpo-mail {
@@ -643,6 +690,7 @@ body {
 
 .info-adjunto {
   flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
 }
@@ -663,8 +711,22 @@ body {
   cursor: pointer;
 }
 
+.pie-confirmacion {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
 /* Adaptación Web Responsive (Mobile) */
 @media (max-width: 720px) {
+  .contenedor-principal {
+    margin-top: 20px;
+  }
+
+  .tarjeta-principal {
+    padding: 22px;
+  }
+
   .grilla-calendario {
     grid-template-columns: repeat(4, 1fr);
   }
@@ -681,5 +743,104 @@ body {
   .grilla-datos-finales,
   .fila-mp {
     grid-template-columns: 1fr;
+  }
+
+  .tabla-mail {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  .contenedor-principal {
+    margin-top: 16px;
+    padding-right: 12px;
+    padding-left: 12px;
+  }
+
+  .tarjeta-principal {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .banner-mp {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 16px;
+  }
+
+  .banner-mp h3 {
+    font-size: 1.1rem;
+  }
+
+  .monto-mp {
+    font-size: 1.5rem;
+  }
+
+  .detalle-transaccion-mp {
+    padding: 14px;
+  }
+
+  .detalle-transaccion-mp li {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .detalle-transaccion-mp li strong {
+    text-align: left;
+  }
+
+  .simulador-tarjeta-mp {
+    padding: 14px;
+  }
+
+  .acciones-mp {
+    flex-direction: column;
+  }
+
+  .acciones-mp > button,
+  .resumen-exito > .btn-secundario,
+  .pie-confirmacion > button {
+    width: 100%;
+  }
+
+  .cabecera-ventana-mail {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 12px 14px;
+  }
+
+  .cabecera-ventana-mail > span:first-child {
+    flex-basis: auto;
+  }
+
+  .metadatos-mail {
+    padding: 12px 14px;
+  }
+
+  .cuerpo-mail {
+    padding: 16px 0;
+  }
+
+  .caja-adjunto {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    padding: 12px;
+  }
+
+  .info-adjunto {
+    flex-basis: calc(100% - 52px);
+  }
+
+  .btn-descargar {
+    width: 100%;
+  }
+
+  .pie-confirmacion {
+    justify-content: stretch;
   }
 }
